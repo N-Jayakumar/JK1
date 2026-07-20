@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: html(title='Order Details | JKØ', activeTab='orders', content=~{::content})}">
+<head>
+    <title>Order Details</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="mb-4">
+            <a th:href="@{/admin/orders}" class="text-decoration-none text-dark small fw-bold text-uppercase" style="letter-spacing: 1px;">
+                <i class="bi bi-arrow-left me-1"></i> Back to Orders
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <!-- Order Info & Status Update -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="fw-bold mb-0 text-uppercase" style="letter-spacing: 1px;">Order <span class="text-muted font-monospace" th:text="${'#' + order.orderNumber}">#123</span></h4>
+                            <span class="badge rounded-pill px-4 py-2 fs-6"
+                                  th:classappend="${order.orderStatus.name() == 'DELIVERED' ? 'bg-success' : (order.orderStatus.name() == 'CANCELLED' ? 'bg-danger' : 'bg-warning text-dark')}"
+                                  th:text="${order.orderStatus}">STATUS</span>
+                        </div>
+
+                        <form th:action="@{/admin/orders/{id}/update-status(id=${order.id})}" th:object="${updateDto}" method="post" class="bg-light p-4 rounded-4 mb-5 border">
+                            <h6 class="fw-bold text-uppercase mb-3 small" style="letter-spacing: 1px;">Update Order Status</h6>
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-5">
+                                    <label class="form-label text-muted small fw-semibold text-uppercase">Status</label>
+                                    <select class="form-select border-0" th:field="*{orderStatus}">
+                                        <option th:each="status : ${T(com.jk1.entity.enums.OrderStatus).values()}" 
+                                                th:value="${status}" th:text="${status}"></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label text-muted small fw-semibold text-uppercase">Tracking #</label>
+                                    <input type="text" class="form-control border-0" th:field="*{trackingNumber}" placeholder="Courier Tracking ID">
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-dark w-100 fw-bold">Update</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <h5 class="fw-bold text-uppercase mb-4" style="letter-spacing: 1px;">Order Items</h5>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead>
+                                    <tr class="text-uppercase text-muted" style="font-size: 0.75rem; letter-spacing: 1px;">
+                                        <th class="border-0">Product</th>
+                                        <th class="border-0 text-center">Qty</th>
+                                        <th class="border-0 text-end">Price</th>
+                                        <th class="border-0 text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${order.items}">
+                                        <td class="py-3">
+                                            <div class="d-flex align-items-center">
+                                                <div>
+                                                    <h6 class="mb-0 fw-bold" th:text="${item.product.name}">Product Name</h6>
+                                                    <small class="text-muted font-monospace" th:text="${item.product.sku}">SKU</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 text-center fw-semibold" th:text="${item.quantity}">1</td>
+                                        <td class="py-3 text-end text-muted" th:text="${'$' + item.price}">$0.00</td>
+                                        <td class="py-3 text-end fw-bold" th:text="${'$' + (item.price * item.quantity)}">$0.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer & Summary -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold text-uppercase mb-3" style="letter-spacing: 1px;">Customer Details</h6>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px;">
+                                <i class="bi bi-person-fill fs-5"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold" th:text="${order.user.firstName + ' ' + order.user.lastName}">Customer Name</h6>
+                                <a th:href="@{/admin/customers/{id}(id=${order.user.id})}" class="text-decoration-none small text-muted">View Profile</a>
+                            </div>
+                        </div>
+                        <ul class="list-unstyled small mb-0">
+                            <li class="mb-2"><i class="bi bi-envelope text-muted me-2"></i><span th:text="${order.user.email}">email@example.com</span></li>
+                            <li><i class="bi bi-telephone text-muted me-2"></i><span th:text="${order.user.phone}">Phone</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4 mb-4 bg-light">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold text-uppercase mb-3" style="letter-spacing: 1px;">Shipping Address</h6>
+                        <address class="mb-0 small text-muted" style="line-height: 1.8;">
+                            <strong class="text-dark d-block mb-1" th:text="${order.shippingAddress.fullName}">Name</strong>
+                            <span th:text="${order.shippingAddress.streetAddress}">Street</span><br>
+                            <span th:text="${order.shippingAddress.city + ', ' + order.shippingAddress.state + ' ' + order.shippingAddress.zipCode}">City</span><br>
+                            <span th:text="${order.shippingAddress.country}">Country</span>
+                        </address>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold text-uppercase mb-3" style="letter-spacing: 1px;">Order Summary</h6>
+                        
+                        <div class="d-flex justify-content-between mb-2 small text-muted">
+                            <span>Subtotal</span>
+                            <span th:text="${'$' + order.totalAmount}">$0.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3 small text-muted" th:if="${order.coupon != null}">
+                            <span>Discount (<span th:text="${order.coupon.code}">CODE</span>)</span>
+                            <span class="text-success">-<span th:text="${'$' + order.coupon.discountAmount}">$0.00</span></span>
+                        </div>
+                        <hr class="text-muted">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold text-uppercase" style="letter-spacing: 1px;">Total</span>
+                            <span class="fs-4 fw-bold" th:text="${'$' + order.totalAmount}">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    <!-- JS Integration -->
+    <script type="module" th:src="@{/js/app.js}"></script>
+    <script type="module" th:src="@{/js/pages/admin/order-details.js}"></script>
+    </div>
+</body>
+</html>

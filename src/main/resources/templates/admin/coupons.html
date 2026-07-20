@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: html(title='Coupons | JKØ', activeTab='coupons', content=~{::content})}">
+<head>
+    <title>Coupons</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold mb-0" style="font-family: 'Playfair Display', serif; letter-spacing: 1px;">Coupons</h3>
+            <a th:href="@{/admin/coupons/new}" class="btn btn-dark rounded-pill px-4 text-uppercase fw-semibold" style="letter-spacing: 1px; font-size: 0.8rem;">
+                <i class="bi bi-plus-lg me-2"></i>Create Coupon
+            </a>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="bg-light text-uppercase text-muted" style="font-size: 0.75rem; letter-spacing: 1px;">
+                        <tr>
+                            <th class="py-3 px-4 fw-semibold border-0">Code</th>
+                            <th class="py-3 fw-semibold border-0">Type</th>
+                            <th class="py-3 fw-semibold border-0">Discount</th>
+                            <th class="py-3 fw-semibold border-0">Expiry</th>
+                            <th class="py-3 fw-semibold border-0">Status</th>
+                            <th class="py-3 px-4 fw-semibold border-0 text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="coupon : ${couponPage.content}">
+                            <td class="py-3 px-4 fw-bold font-monospace" th:text="${coupon.code}">SUMMER20</td>
+                            <td class="py-3 text-muted small" th:text="${coupon.couponType}">PERCENTAGE</td>
+                            <td class="py-3 fw-semibold">
+                                <span th:if="${coupon.couponType.name() == 'PERCENTAGE'}" th:text="${coupon.discountPercentage + '%'}">20%</span>
+                                <span th:if="${coupon.couponType.name() == 'FIXED_AMOUNT'}" th:text="${'$' + coupon.discountAmount}">$10</span>
+                                <span th:if="${coupon.couponType.name() == 'FREE_SHIPPING'}">Free Ship</span>
+                            </td>
+                            <td class="py-3 text-muted small">
+                                <span th:text="${#temporals.format(coupon.expiryDate, 'MMM dd, yyyy')}">Date</span>
+                                <br>
+                                <span class="badge bg-danger rounded-pill mt-1" th:if="${coupon.expiryDate.isBefore(T(java.time.LocalDateTime).now())}">Expired</span>
+                            </td>
+                            <td class="py-3">
+                                <form th:action="@{/admin/coupons/{id}/toggle(id=${coupon.id})}" method="post">
+                                    <button type="submit" class="btn btn-sm rounded-pill px-3"
+                                            th:classappend="${coupon.isActive ? 'btn-success' : 'btn-secondary'}"
+                                            th:text="${coupon.isActive ? 'Active' : 'Disabled'}">Status</button>
+                                </form>
+                            </td>
+                            <td class="py-3 px-4 text-end">
+                                <a th:href="@{/admin/coupons/edit/{id}(id=${coupon.id})}" class="btn btn-sm btn-outline-dark rounded-circle me-1"><i class="bi bi-pencil"></i></a>
+                                <a th:href="@{/admin/coupons/delete/{id}(id=${coupon.id})}" class="btn btn-sm btn-outline-danger rounded-circle" data-confirm="Delete this coupon?"><i class="bi bi-trash"></i></a>
+                            </td>
+                        </tr>
+                        <tr th:if="${couponPage.empty}">
+                            <td colspan="6" class="text-center py-5 text-muted">No coupons found.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="card-footer bg-white border-top py-3" th:if="${couponPage.totalPages > 1}">
+                <nav>
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item" th:classappend="${couponPage.first ? 'disabled' : ''}">
+                            <a class="page-link rounded-circle border-0" th:href="@{/admin/coupons(page=${couponPage.number - 1})}"><i class="bi bi-chevron-left"></i></a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, couponPage.totalPages - 1)}" th:classappend="${couponPage.number == i ? 'active' : ''}">
+                            <a class="page-link rounded-circle border-0 mx-1" th:href="@{/admin/coupons(page=${i})}" th:text="${i + 1}" th:classappend="${couponPage.number == i ? 'bg-dark text-white' : 'text-dark'}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${couponPage.last ? 'disabled' : ''}">
+                            <a class="page-link rounded-circle border-0" th:href="@{/admin/coupons(page=${couponPage.number + 1})}"><i class="bi bi-chevron-right"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    
+    <!-- JS Integration -->
+    <script type="module" th:src="@{/js/app.js}"></script>
+    <script type="module" th:src="@{/js/pages/admin/coupons.js}"></script>
+    </div>
+</body>
+</html>

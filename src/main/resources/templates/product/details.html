@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layouts/main :: layout(~{::title}, ~{::content}, ~{::styles}, ~{})}">
+<head>
+    <title th:text="${product.name} + ' – JKØ'">Product – JKØ</title>
+    <meta name="description" th:content="${#strings.abbreviate(product.description, 160)}">
+</head>
+<body>
+
+<th:block th:fragment="styles">
+    <link rel="stylesheet" th:href="@{/css/pages/product.css}">
+</th:block>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     Page Content
+     ══════════════════════════════════════════════════════════════════════ -->
+<div th:fragment="content" class="container py-5 mt-4">
+
+    <!-- Breadcrumb -->
+    <div th:replace="~{fragments/breadcrumb :: breadcrumb(${product.name})}"></div>
+
+    <!-- ══ Main Product Row ════════════════════════════════════════════════ -->
+    <div class="row g-5 mt-2">
+
+        <!-- ── Left: Image Gallery ─────────────────────────────────────────── -->
+        <div class="col-lg-6"
+             x-data="{
+                 activeImg: [[${product.imageUrl}]],
+                 thumbs: [[${product.allImageUrls != null ? product.allImageUrls : #lists.asList(product.imageUrl)}]]
+             }">
+
+            <!-- Main image -->
+            <div class="product-gallery-main shadow-sm" id="gallery-main">
+                <img :src="activeImg"
+                     th:alt="${product.name}"
+                     id="gallery-main-img">
+            </div>
+
+            <!-- Thumbnails -->
+            <div class="row g-2 mt-1">
+                <!-- Thumbnails from allImageUrls -->
+                <div class="col-3" th:each="imgUrl, iterStat : ${product.allImageUrls}">
+                    <div class="product-gallery-thumb"
+                         th:classappend="${iterStat.first ? 'active' : ''}"
+                         th:attr="data-img=${imgUrl}"
+                         onclick="setActiveThumb(this)">
+                        <img th:src="${imgUrl}"
+                             th:alt="${product.name} + ' view ' + ${iterStat.index + 1}"
+                             loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Right: Product Info ─────────────────────────────────────────── -->
+        <div class="col-lg-6">
+
+            <!-- Brand badge + category breadcrumb -->
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <a th:href="@{/products/category/{slug}(slug=${product.categorySlug})}"
+                   class="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2 text-decoration-none fw-medium text-uppercase"
+                   style="letter-spacing:0.08em; font-size:0.7rem;"
+                   th:text="${product.categoryName}">Category</a>
+                <span class="badge rounded-pill bg-light text-dark px-3 py-2 fw-medium border"
+                      style="font-size:0.7rem;"
+                      th:text="${product.brandName}">Brand</span>
+                <span th:if="${product.featured}"
+                      class="badge rounded-pill bg-warning text-dark px-3 py-2 fw-bold"
+                      style="font-size:0.7rem;">★ Featured</span>
+            </div>
+
+            <!-- Product name -->
+            <h1 class="display-6 fw-bold font-poppins mb-2" th:text="${product.name}">Product Name</h1>
+
+            <!-- Rating row -->
+            <div class="d-flex align-items-center gap-3 mb-4">
+                <div class="star-rating">
+                    <th:block th:each="i : ${#numbers.sequence(1, 5)}">
+                        <i th:class="${i <= product.averageRating ? 'bi bi-star-fill' :
+                                       (i - 0.5 <= product.averageRating ? 'bi bi-star-half' : 'bi bi-star')}"
+                           style="color:#f6ad55; font-size:1rem;"></i>
+                    </th:block>
+                </div>
+                <span class="text-muted text-sm"
+                      th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)} + ' Rating'">
+                    4.5 Rating
+                </span>
+                <span class="text-muted">|</span>
+                <span class="text-muted text-sm"
+                      th:text="${product.reviewCount} + ' Reviews'">0 Reviews</span>
+                <span class="text-muted">|</span>
+                <span class="text-muted text-sm">SKU:
+                    <span class="fw-medium text-dark" th:text="${product.sku}">SKU123</span>
+                </span>
+            </div>
+
+            <!-- Price block -->
+            <div class="price-block mb-4">
+                <!-- With discount -->
+                <div th:if="${product.discountPrice != null}" class="d-flex align-items-baseline gap-2">
+                    <span class="price-current"
+                          th:text="'$' + ${#numbers.formatDecimal(product.discountPrice, 1, 2)}">$0.00</span>
+                    <span class="price-was"
+                          th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$0.00</span>
+                    <span class="price-save-badge"
+                          th:if="${product.discountPercentage > 0}"
+                          th:text="'SAVE ' + ${#numbers.formatDecimal(product.discountPercentage, 0, 0)} + '%'">
+                        SAVE 10%
+                    </span>
+                </div>
+                <!-- Without discount -->
+                <div th:if="${product.discountPrice == null}">
+                    <span class="price-current"
+                          th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$0.00</span>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <p class="lead text-muted mb-4 fs-6 lh-lg" th:text="${product.description}">
+                Product description goes here.
+            </p>
+
+            <hr class="text-muted mb-4">
+
+            <!-- Quantity + Stock -->
+            <div class="mb-4" x-data="{ qty: 1, maxQty: [[${product.stockQuantity}]] }">
+                <p class="fw-bold font-poppins mb-2">Quantity</p>
+                <div class="d-flex align-items-center gap-4">
+                    <div class="quantity-selector">
+                        <button type="button"
+                                @click="if (qty > 1) qty--"
+                                :disabled="qty <= 1"
+                                id="qty-decrease-btn">
+                            <i class="bi bi-dash"></i>
+                        </button>
+                        <input type="number" x-model="qty"
+                               :min="1" :max="maxQty"
+                               readonly
+                               id="qty-input"
+                               style="pointer-events:none;">
+                        <button type="button"
+                                @click="if (qty < maxQty) qty++"
+                                :disabled="qty >= maxQty"
+                                id="qty-increase-btn">
+                            <i class="bi bi-plus"></i>
+                        </button>
+                    </div>
+
+                    <!-- Stock indicator -->
+                    <span th:if="${product.stockQuantity > 10}"
+                          class="text-success fw-medium text-sm">
+                        <i class="bi bi-check-circle me-1"></i>In Stock
+                    </span>
+                    <span th:if="${product.stockQuantity > 0 and product.stockQuantity <= 10}"
+                          class="text-warning fw-medium text-sm">
+                        <i class="bi bi-exclamation-circle me-1"></i>
+                        Only <strong th:text="${product.stockQuantity}"></strong> left!
+                    </span>
+                    <span th:if="${product.stockQuantity == 0}"
+                          class="text-danger fw-medium text-sm">
+                        <i class="bi bi-x-circle me-1"></i>Out of Stock
+                    </span>
+                </div>
+            </div>
+
+            <!-- ── Add to Cart + Wishlist CTAs ─────────────────────────────── -->
+            <div class="d-flex gap-3 mt-4 flex-wrap">
+
+                <!-- Add to Cart form (POST /cart/add) -->
+                <form th:action="@{/cart/add}" method="POST" class="flex-grow-1 d-flex gap-3">
+                    <input type="hidden" name="productId" th:value="${product.id}" id="cart-product-id">
+                    <input type="hidden" name="quantity" value="1" id="cart-quantity-hidden">
+
+                    <button type="submit"
+                            id="add-to-cart-btn"
+                            class="btn btn-primary btn-lg rounded-pill px-5 fw-medium shadow flex-grow-1"
+                            th:disabled="${product.stockQuantity <= 0}">
+                        <i class="bi bi-cart-plus me-2"></i>
+                        <span th:text="${product.stockQuantity > 0 ? 'Add to Cart' : 'Out of Stock'}">Add to Cart</span>
+                    </button>
+                </form>
+
+                <!-- Add to Wishlist form (POST /wishlist/add/{id}) -->
+                <form th:action="@{/wishlist/add/{id}(id=${product.id})}" method="POST">
+                    <button type="submit"
+                            id="add-to-wishlist-btn"
+                            class="btn btn-outline-danger btn-lg rounded-circle shadow-sm"
+                            style="width: 52px; height: 52px; padding: 0;"
+                            title="Add to Wishlist">
+                        <i class="bi bi-heart"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="trust-badges mt-4 pt-4 border-top">
+                <p><i class="bi bi-shield-check text-primary me-2"></i>1 Year JKØ Warranty</p>
+                <p><i class="bi bi-arrow-return-left text-primary me-2"></i>30-Day Hassle-Free Returns</p>
+                <p class="mb-0"><i class="bi bi-truck text-primary me-2"></i>Free Shipping on orders over $100</p>
+            </div>
+
+        </div><!-- /product info col -->
+    </div><!-- /main row -->
+
+    <!-- ══ Complete The Look ════════════════════════════════════════════════ -->
+    <div th:if="${completeTheLook != null and !completeTheLook.empty}"
+         class="section-divider">
+        <h3 class="fw-bold font-poppins mb-4">Complete The Look
+            <span class="badge bg-success ms-2" style="font-size:0.75rem; vertical-align:middle;">Save 15%</span>
+        </h3>
+        <div class="bg-white p-4 rounded-4 shadow-sm border">
+            <div class="d-flex flex-wrap align-items-center gap-4">
+
+                <!-- Current product -->
+                <div class="text-center" style="min-width:80px;">
+                    <img th:src="${product.imageUrl}"
+                         th:alt="${product.name}"
+                         width="80" height="80"
+                         class="rounded-circle object-fit-cover shadow-sm border border-3 border-white"
+                         loading="lazy">
+                    <p class="small fw-bold mt-2 mb-0 text-truncate" style="max-width:90px;"
+                       th:text="${product.name}">Current</p>
+                </div>
+
+                <!-- Complement items -->
+                <div th:each="item : ${completeTheLook}" class="d-flex align-items-center gap-4">
+                    <i class="bi bi-plus-lg fs-4 text-muted"></i>
+                    <div class="text-center" style="min-width:80px;">
+                        <a th:href="@{/products/{slug}(slug=${item.slug})}" class="text-decoration-none text-dark">
+                            <img th:src="${item.imageUrl}"
+                                 th:alt="${item.name}"
+                                 width="80" height="80"
+                                 class="rounded-circle object-fit-cover shadow-sm border border-3 border-white related-card"
+                                 loading="lazy">
+                            <p class="small fw-medium mt-2 mb-0 text-truncate" style="max-width:90px;"
+                               th:text="${item.name}">Item</p>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Bundle CTA -->
+                <div class="ms-auto bg-light p-3 rounded-4 text-center" style="min-width:140px;">
+                    <p class="text-muted small mb-1">Bundle &amp; Save</p>
+                    <h5 class="fw-bold text-primary mb-2">Buy Together</h5>
+                    <button class="btn btn-primary rounded-pill px-4 text-sm fw-medium"
+                            id="add-bundle-btn"
+                            type="button">
+                        <i class="bi bi-bag-plus me-1"></i>Add Bundle
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ Related Products ═════════════════════════════════════════════════ -->
+    <div th:if="${relatedProducts != null and !relatedProducts.empty}"
+         class="section-divider">
+        <h3 class="fw-bold font-poppins mb-4">You May Also Like</h3>
+        <div class="row g-4">
+            <div class="col-md-3 col-sm-6" th:each="related : ${relatedProducts}">
+                <div class="related-card h-100">
+                    <div class="overflow-hidden" style="aspect-ratio: 3/4; background:#f8f9fa;">
+                        <a th:href="@{/products/{slug}(slug=${related.slug})}">
+                            <img th:src="${related.imageUrl}"
+                                 th:alt="${related.name}"
+                                 class="w-100 h-100 object-fit-cover p-3"
+                                 loading="lazy">
+                        </a>
+                    </div>
+                    <div class="p-3 text-center bg-white">
+                        <p class="text-muted text-xs text-uppercase mb-1"
+                           th:text="${related.categoryName}">Category</p>
+                        <h6 class="fw-bold font-poppins text-dark mb-1 text-truncate"
+                            th:text="${related.name}">Product</h6>
+                        <!-- Price -->
+                        <div class="d-flex align-items-baseline justify-content-center gap-1">
+                            <span th:if="${related.discountPrice != null}"
+                                  class="fw-bold text-danger"
+                                  th:text="'$' + ${#numbers.formatDecimal(related.discountPrice, 1, 2)}">$0.00</span>
+                            <span th:if="${related.discountPrice != null}"
+                                  class="price-original text-xs"
+                                  th:text="'$' + ${#numbers.formatDecimal(related.price, 1, 2)}">$0.00</span>
+                            <span th:if="${related.discountPrice == null}"
+                                  class="fw-bold text-primary"
+                                  th:text="'$' + ${#numbers.formatDecimal(related.price, 1, 2)}">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ Recently Viewed (Client-side, Alpine + localStorage) ════════════ -->
+    <div x-data="recentlyViewed"
+         x-show="viewedProducts.length > 0"
+         class="section-divider"
+         style="display: none;">
+        <h3 class="fw-bold font-poppins mb-4">Recently Viewed</h3>
+        <div class="row g-4">
+            <template x-for="item in viewedProducts" :key="item.id">
+                <div class="col-md-2 col-sm-4 col-6">
+                    <a :href="'/products/' + item.slug"
+                       class="text-decoration-none text-dark text-center d-block hover-lift transition-all">
+                        <div class="bg-light rounded-4 p-2 mb-2 shadow-sm" style="aspect-ratio:1;">
+                            <img :src="item.imageUrl"
+                                 class="w-100 h-100 object-fit-cover mix-blend-multiply rounded-3"
+                                 :alt="item.name"
+                                 loading="lazy">
+                        </div>
+                        <p class="small fw-medium mb-0 text-truncate" x-text="item.name"></p>
+                        <span class="text-primary fw-bold small" x-text="'$' + item.price"></span>
+                    </a>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script type="module" th:src="@{/js/app.js}"></script>
+    <script type="module" th:src="@{/js/pages/product/details.js}"></script>
+
+    <!-- Inline: sync Alpine qty to hidden form field + thumb switching -->
+    <script>
+        // Sync quantity input with the hidden cart form field
+        document.addEventListener('alpine:init', () => {
+            // Watch qty changes from the x-data component and mirror to hidden field
+            document.addEventListener('alpine:initialized', () => {
+                const qtyInput   = document.getElementById('qty-input');
+                const hiddenQty  = document.getElementById('cart-quantity-hidden');
+                if (qtyInput && hiddenQty) {
+                    const observer = new MutationObserver(() => {
+                        hiddenQty.value = qtyInput.value || 1;
+                    });
+                    observer.observe(qtyInput, { attributes: true, attributeFilter: ['value'] });
+                    qtyInput.addEventListener('input', () => {
+                        hiddenQty.value = qtyInput.value || 1;
+                    });
+                }
+            });
+        });
+
+        // Thumbnail switching (vanilla JS, no Alpine dependency)
+        function setActiveThumb(el) {
+            document.querySelectorAll('.product-gallery-thumb').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            const mainImg = document.getElementById('gallery-main-img');
+            if (mainImg) {
+                mainImg.src = el.dataset.img;
+            }
+        }
+    </script>
+</div>
+</body>
+</html>

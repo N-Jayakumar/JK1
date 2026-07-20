@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="sidebar(activeTab)" class="admin-sidebar d-flex flex-column" 
+     :class="{ 'd-block': sidebarOpen, 'd-none d-lg-flex': !sidebarOpen }">
+    
+    <div class="p-4 border-bottom border-secondary border-opacity-25 d-flex justify-content-between align-items-center">
+        <a href="/admin/dashboard" class="text-white text-decoration-none d-flex align-items-center gap-2">
+            <span class="fs-4 fw-bold" style="font-family: 'Playfair Display', serif; letter-spacing: 2px;">JKØ</span>
+            <span class="badge bg-light text-dark text-uppercase rounded-pill" style="font-size: 0.6rem; letter-spacing: 1px;">Admin</span>
+        </a>
+        <button @click="sidebarOpen = false" class="btn btn-link text-white p-0 d-lg-none">
+            <i class="bi bi-x-lg fs-5"></i>
+        </button>
+    </div>
+    
+    <div class="flex-grow-1 overflow-y-auto py-4">
+        <h6 class="px-4 text-uppercase text-muted fw-bold mb-3" style="font-size: 0.7rem; letter-spacing: 1px;">Overview</h6>
+        
+        <a th:href="@{/admin/dashboard}" class="sidebar-link" th:classappend="${activeTab == 'dashboard' ? 'active' : ''}">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+        </a>
+        <a th:href="@{/admin/orders}" class="sidebar-link" th:classappend="${activeTab == 'orders' ? 'active' : ''}">
+            <i class="bi bi-bag-check-fill"></i>
+            <span>Orders</span>
+        </a>
+
+        <h6 class="px-4 text-uppercase text-muted fw-bold mb-3 mt-4" style="font-size: 0.7rem; letter-spacing: 1px;">Catalog</h6>
+        
+        <a th:href="@{/admin/products}" class="sidebar-link" th:classappend="${activeTab == 'products' ? 'active' : ''}">
+            <i class="bi bi-box-seam-fill"></i>
+            <span>Products</span>
+        </a>
+        <a th:href="@{/admin/inventory}" class="sidebar-link" th:classappend="${activeTab == 'inventory' ? 'active' : ''}">
+            <i class="bi bi-stack"></i>
+            <span>Inventory</span>
+        </a>
+        <a th:href="@{/admin/categories}" class="sidebar-link" th:classappend="${activeTab == 'categories' ? 'active' : ''}">
+            <i class="bi bi-tags-fill"></i>
+            <span>Categories</span>
+        </a>
+        <a href="/admin/brands" class="sidebar-link" th:classappend="${activeTab == 'brands' ? 'active' : ''}">
+            <i class="bi bi-award-fill"></i>
+            <span>Brands</span>
+        </a>
+
+        <h6 class="px-4 text-uppercase text-muted fw-bold mb-3 mt-4" style="font-size: 0.7rem; letter-spacing: 1px;">Business</h6>
+        
+        <a href="/admin/customers" class="sidebar-link" th:classappend="${activeTab == 'customers' ? 'active' : ''}">
+            <i class="bi bi-people-fill"></i>
+            <span>Customers</span>
+        </a>
+        <a href="/admin/coupons" class="sidebar-link" th:classappend="${activeTab == 'coupons' ? 'active' : ''}">
+            <i class="bi bi-ticket-perforated-fill"></i>
+            <span>Coupons</span>
+        </a>
+        <a href="/admin/reviews" class="sidebar-link" th:classappend="${activeTab == 'reviews' ? 'active' : ''}">
+            <i class="bi bi-star-fill"></i>
+            <span>Reviews</span>
+        </a>
+        <a href="/admin/notifications" class="sidebar-link" th:classappend="${activeTab == 'notifications' ? 'active' : ''}">
+            <i class="bi bi-bell-fill"></i>
+            <span>Notifications</span>
+        </a>
+        <a href="/admin/analytics" class="sidebar-link" th:classappend="${activeTab == 'analytics' ? 'active' : ''}">
+            <i class="bi bi-graph-up"></i>
+            <span>Analytics</span>
+        </a>
+    </div>
+
+    <div class="p-4 border-top border-secondary border-opacity-25">
+        <a th:href="@{/}" class="sidebar-link px-0 text-muted" target="_blank">
+            <i class="bi bi-box-arrow-up-right"></i>
+            <span>View Storefront</span>
+        </a>
+        <form th:action="@{/logout}" method="post" class="mt-2">
+            <button type="submit" class="btn btn-outline-light w-100 rounded-pill text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 1px;">
+                <i class="bi bi-box-arrow-right me-2"></i>Logout
+            </button>
+        </form>
+    </div>
+</div>
+</html>

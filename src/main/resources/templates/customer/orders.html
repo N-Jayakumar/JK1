@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{customer/layout :: html(title='My Orders | JKØ', activeTab='orders', content=~{::content})}">
+<head>
+    <title>My Orders | JKØ</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="mb-5">
+            <h2 class="fw-bold mb-1" style="font-family: 'Playfair Display', serif; letter-spacing: 1px;">Order History</h2>
+            <p class="text-muted mb-0">Track and manage your premium purchases</p>
+        </div>
+
+        <div th:if="${orders == null || orders.isEmpty()}" class="text-center py-5 bg-white rounded-4 shadow-sm border-0">
+            <i class="bi bi-box-seam display-1 text-muted mb-3 opacity-25"></i>
+            <h4 class="fw-bold">No Orders Found</h4>
+            <p class="text-muted mb-4">You haven't made any purchases yet.</p>
+            <a th:href="@{/}" class="btn btn-dark rounded-pill px-4 text-uppercase" style="letter-spacing: 1px; font-size: 0.85rem;">Start Shopping</a>
+        </div>
+
+        <div th:if="${orders != null && !orders.isEmpty()}">
+            <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden" th:each="order : ${orders}">
+                <div class="card-header bg-light border-0 py-3 px-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-muted text-uppercase me-3" style="font-size: 0.75rem; letter-spacing: 1px;">Order Placed</span>
+                        <span class="fw-bold fs-6" th:text="${#temporals.format(order.createdAt, 'dd MMM yyyy')}">Date</span>
+                    </div>
+                    <div class="text-end">
+                        <span class="text-muted text-uppercase me-2" style="font-size: 0.75rem; letter-spacing: 1px;">Order #</span>
+                        <span class="fw-bold font-monospace" th:text="${order.orderNumber}">#123</span>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center mb-3 mb-md-0" th:each="item, iterStat : ${order.items}" th:if="${iterStat.index < 2}">
+                                <div class="flex-shrink-0 bg-light rounded-3 overflow-hidden me-3" style="width: 60px; height: 60px;">
+                                    <img th:if="${!item.product.images.isEmpty()}" th:src="${item.product.images[0].imageUrl}" class="w-100 h-100 object-fit-cover">
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-0" th:text="${item.product.name}">Product</h6>
+                                    <small class="text-muted">Qty: <span th:text="${item.quantity}">1</span></small>
+                                </div>
+                            </div>
+                            <div th:if="${order.items.size() > 2}" class="text-muted small mt-2">
+                                + <span th:text="${order.items.size() - 2}"></span> more item(s)
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-end border-md-start ps-md-4 mt-3 mt-md-0">
+                            <div class="mb-2">
+                                <span class="badge rounded-pill px-3 py-2 text-uppercase" 
+                                      th:classappend="${order.orderStatus.name() == 'DELIVERED'} ? 'bg-success' : (${order.orderStatus.name() == 'PENDING'} ? 'bg-warning text-dark' : 'bg-dark')"
+                                      style="letter-spacing: 1px; font-size: 0.7rem;"
+                                      th:text="${order.orderStatus}">STATUS</span>
+                            </div>
+                            <div class="fw-bold fs-5 mb-3" style="font-family: 'Playfair Display', serif;">$<span th:text="${order.totalAmount}">0.00</span></div>
+                            <a th:href="@{/account/orders/{id}(id=${order.orderNumber})}" class="btn btn-outline-dark btn-sm rounded-pill w-100 text-uppercase" style="letter-spacing: 1px;">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    <!-- JS Integration -->
+    <script type="module" th:src="@{/js/app.js}"></script>
+    <script type="module" th:src="@{/js/pages/customer/orders.js}"></script>
+    </div>
+</body>
+</html>

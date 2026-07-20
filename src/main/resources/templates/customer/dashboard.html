@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{customer/layout :: html(title='Dashboard | JKØ', activeTab='dashboard', content=~{::content})}">
+<head>
+    <title>Dashboard | JKØ</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="mb-5">
+            <h2 class="fw-bold mb-1" style="font-family: 'Playfair Display', serif; letter-spacing: 1px;">Welcome Back, <span th:text="${#authentication.principal.username.split('@')[0]}">User</span></h2>
+            <p class="text-muted mb-0">Here's an overview of your account</p>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card border-0 bg-dark text-white rounded-4 h-100">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="mb-auto">
+                            <i class="bi bi-box-seam fs-1 opacity-50 mb-3 d-block"></i>
+                            <h5 class="fw-bold text-uppercase" style="letter-spacing: 1px;">Recent Orders</h5>
+                            <p class="small opacity-75 mb-0">Track your purchases</p>
+                        </div>
+                        <div class="mt-4">
+                            <a th:href="@{/account/orders}" class="btn btn-outline-light rounded-pill btn-sm text-uppercase fw-semibold" style="letter-spacing: 1px;">View All</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card border-0 bg-light rounded-4 h-100">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="mb-auto">
+                            <i class="bi bi-geo-alt fs-1 text-muted mb-3 d-block"></i>
+                            <h5 class="fw-bold text-uppercase" style="letter-spacing: 1px;">Addresses</h5>
+                            <p class="small text-muted mb-0">Manage shipping info</p>
+                        </div>
+                        <div class="mt-4">
+                            <a th:href="@{/account/addresses}" class="btn btn-dark rounded-pill btn-sm text-uppercase fw-semibold" style="letter-spacing: 1px;">Manage</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 bg-light rounded-4 h-100 position-relative">
+                    <div th:if="${unreadNotifications != null && unreadNotifications.size() > 0}" class="position-absolute top-0 end-0 mt-3 me-3">
+                        <span class="badge bg-danger rounded-circle p-2"><span class="visually-hidden">unread messages</span></span>
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="mb-auto">
+                            <i class="bi bi-bell fs-1 text-muted mb-3 d-block"></i>
+                            <h5 class="fw-bold text-uppercase" style="letter-spacing: 1px;">Notifications</h5>
+                            <p class="small text-muted mb-0" th:text="${unreadNotifications != null && unreadNotifications.size() > 0 ? unreadNotifications.size() + ' Unread' : 'All caught up!'}">0 Unread</p>
+                        </div>
+                        <div class="mt-4">
+                            <a th:href="@{/account/notifications}" class="btn btn-dark rounded-pill btn-sm text-uppercase fw-semibold" style="letter-spacing: 1px;">View All</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="fw-bold mb-4 text-uppercase" style="letter-spacing: 1px; font-size: 1.1rem;">Recent Orders</h4>
+        
+        <div th:if="${recentOrders == null || recentOrders.isEmpty()}" class="text-center py-5 bg-white rounded-4 shadow-sm border-0">
+            <p class="text-muted mb-0">No recent orders found.</p>
+        </div>
+
+        <div th:if="${recentOrders != null && !recentOrders.isEmpty()}" class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-borderless table-hover mb-0 align-middle">
+                    <thead class="bg-light text-uppercase text-muted" style="font-size: 0.75rem; letter-spacing: 1px;">
+                        <tr>
+                            <th class="py-3 px-4 fw-semibold rounded-top-left">Order #</th>
+                            <th class="py-3 fw-semibold">Date</th>
+                            <th class="py-3 fw-semibold">Total</th>
+                            <th class="py-3 fw-semibold">Status</th>
+                            <th class="py-3 px-4 fw-semibold text-end rounded-top-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="order : ${recentOrders}" class="border-bottom">
+                            <td class="py-3 px-4 font-monospace fw-bold" th:text="${order.orderNumber}">#123</td>
+                            <td class="py-3 text-muted" th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy')}">Date</td>
+                            <td class="py-3 fw-bold" style="font-family: 'Playfair Display', serif;">$<span th:text="${order.totalAmount}">0.00</span></td>
+                            <td class="py-3">
+                                <span class="badge rounded-pill px-3 py-2 text-uppercase" style="font-size: 0.7rem; letter-spacing: 1px;"
+                                      th:classappend="${order.orderStatus.name() == 'DELIVERED'} ? 'bg-success' : (${order.orderStatus.name() == 'PENDING'} ? 'bg-warning text-dark' : 'bg-dark')"
+                                      th:text="${order.orderStatus}">STATUS</span>
+                            </td>
+                            <td class="py-3 px-4 text-end">
+                                <a th:href="@{/account/orders/{id}(id=${order.orderNumber})}" class="btn btn-outline-dark btn-sm rounded-pill text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">View</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    
+    <!-- JS Integration -->
+    <script type="module" th:src="@{/js/app.js}"></script>
+    <script type="module" th:src="@{/js/pages/customer/dashboard.js}"></script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/main :: layout(~{::title}, ~{::content}, ~{::styles}, ~{::scripts})}">
+<head>
+    <title>Deals &amp; Offers - JK1</title>
+</head>
+<body>
+
+<!-- ── Page-scoped styles injected into the layout head ─────────────────────── -->
+<th:block th:fragment="styles">
+    <style>
+        .deal-card { transition: transform 0.2s, box-shadow 0.2s; }
+        .deal-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,0,0,0.12) !important; }
+        .deal-badge { font-size: 0.7rem; letter-spacing: 0.05em; }
+        .deal-image-wrap { aspect-ratio: 3/4; overflow: hidden; background: #f8f9ff; }
+        .deal-image-wrap img { object-fit: cover; width: 100%; height: 100%; mix-blend-multiply; transition: transform 0.4s; }
+        .deal-card:hover .deal-image-wrap img { transform: scale(1.06); }
+        .deals-hero { background: linear-gradient(135deg, #0d6efd 0%, #6f42c1 100%); border-radius: 1.5rem; }
+        .countdown-badge { background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); }
+        .empty-deals-icon { font-size: 5rem; opacity: 0.15; }
+        .sort-select { border: none; background: #f8f9ff; border-radius: 2rem; padding: 0.5rem 1.5rem; font-weight: 500; }
+    </style>
+</th:block>
+
+<!-- ── Page content injected into the layout body ───────────────────────────── -->
+<div th:fragment="content">
+
+    <!-- ── Deals Hero Banner ──────────────────────────────────────────────── -->
+    <section class="deals-hero mx-3 mx-lg-5 mt-4 p-5 text-white text-center shadow-lg" data-aos="zoom-in">
+        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill mb-3 fw-semibold deal-badge">
+            <i class="bi bi-lightning-fill me-1"></i>LIMITED TIME
+        </span>
+        <h1 class="display-5 fw-bold font-poppins mb-2">End of Season Deals</h1>
+        <p class="lead mb-4 fw-light mx-auto opacity-90" style="max-width: 550px;">
+            Unbeatable prices on premium fashion. Upgrade your wardrobe before they're gone.
+        </p>
+        <div class="countdown-badge d-inline-block rounded-pill px-4 py-2 mb-2">
+            <i class="bi bi-clock me-2"></i>
+            <span class="fw-medium">Offers refreshed daily</span>
+        </div>
+    </section>
+
+    <!-- ── Products ───────────────────────────────────────────────────────── -->
+    <div class="container py-5">
+
+        <!-- Service error alert (populated only when DealController catches an exception) -->
+        <div th:if="${dealsError}"
+             class="alert alert-warning alert-dismissible fade show rounded-4 border-0 shadow-sm mb-4"
+             role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${dealsError}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Header row: title + sort control -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold font-poppins mb-0">All Deals</h2>
+                <!--
+                    FIX: Use Thymeleaf literal substitution |...| instead of mixing
+                         string literals and ${} expressions with + inside th:text.
+                         ${totalItems} is a Long — always set by DealController.
+                -->
+                <p class="text-muted mb-0 text-sm"
+                   th:text="|${totalItems} deals available|">0 deals available</p>
+            </div>
+
+            <!-- Sort -->
+            <form action="/deals" method="GET" class="d-flex align-items-center gap-2">
+                <label for="sort" class="text-muted fw-medium mb-0 text-sm">Sort:</label>
+                <select name="sort" id="sort" class="sort-select form-select-sm"
+                        onchange="this.form.submit()">
+                    <option value="newest"     th:selected="${currentSort == 'newest'}">Newest</option>
+                    <option value="price_asc"  th:selected="${currentSort == 'price_asc'}">Price ↑</option>
+                    <option value="price_desc" th:selected="${currentSort == 'price_desc'}">Price ↓</option>
+                    <option value="name_asc"   th:selected="${currentSort == 'name_asc'}">Name A–Z</option>
+                </select>
+            </form>
+        </div>
+
+        <!-- ── EMPTY STATE ──────────────────────────────────────────────────── -->
+        <!--
+            FIX: Use #lists.isEmpty() instead of .isEmpty() on the raw model attribute.
+                 DealController always sets deals = List.of() on error, so null is
+                 theoretically impossible, but the null-safe guard prevents IDE warnings
+                 and runtime NPE if a future code path omits the attribute.
+        -->
+        <div th:if="${deals == null or #lists.isEmpty(deals)}" class="text-center py-5 my-5">
+            <div class="empty-deals-icon mb-4">
+                <i class="bi bi-tag display-1 text-muted"></i>
+            </div>
+            <h3 class="fw-bold font-poppins mb-2">No Deals Right Now</h3>
+            <p class="text-muted mb-4">We're preparing exciting offers. Check back soon!</p>
+            <a th:href="@{/products}" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm">
+                <i class="bi bi-bag me-2"></i>Browse All Products
+            </a>
+        </div>
+
+        <!-- ── DEALS GRID ───────────────────────────────────────────────────── -->
+        <!--
+            FIX: Mirror the empty-state guard using #lists.isEmpty().
+        -->
+        <div th:if="${deals != null and not #lists.isEmpty(deals)}" class="row g-4">
+            <div class="col-lg-3 col-md-4 col-sm-6"
+                 th:each="product : ${deals}"
+                 data-aos="fade-up">
+                <div class="deal-card card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+
+                    <div class="deal-image-wrap position-relative">
+                        <!-- Discount badge -->
+                        <!--
+                            FIX: Use literal substitution |−...% OFF| instead of
+                                 the invalid mixed concatenation
+                                 '-' + ${expr} + '% OFF' inside th:text.
+                                 product.discountPercentage is a double — always set.
+                        -->
+                        <span th:if="${product.discountPercentage > 0}"
+                              class="badge bg-danger position-absolute top-0 start-0 m-3 px-2 py-1 rounded-pill shadow-sm deal-badge"
+                              th:text="|−${#numbers.formatDecimal(product.discountPercentage, 0, 0)}% OFF|">
+                            -10% OFF
+                        </span>
+
+                        <!-- Stock badge -->
+                        <span th:if="${product.stockQuantity < 10 and product.stockQuantity > 0}"
+                              class="badge bg-warning text-dark position-absolute top-0 end-0 m-3 px-2 py-1 rounded-pill shadow-sm deal-badge">
+                            Low Stock
+                        </span>
+
+                        <a th:href="@{/products/{slug}(slug=${product.slug})}">
+                            <img th:src="${product.imageUrl}"
+                                 th:alt="${product.name}"
+                                 class="p-3">
+                        </a>
+                    </div>
+
+                    <div class="card-body p-3 text-center d-flex flex-column">
+                        <p class="text-muted text-xs text-uppercase tracking-wider mb-1"
+                           th:text="${product.categoryName}">Category</p>
+
+                        <h6 class="fw-bold font-poppins mb-2 text-truncate">
+                            <a th:href="@{/products/{slug}(slug=${product.slug})}"
+                               class="text-dark text-decoration-none"
+                               th:text="${product.name}">Product Name</a>
+                        </h6>
+
+                        <!-- Stars (static; averageRating is mocked at 4.5 in mapper) -->
+                        <div class="text-warning mb-2 text-sm d-flex justify-content-center gap-1">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-half"></i>
+                            <!--
+                                FIX: Use literal substitution |(${product.averageRating})|
+                                     instead of invalid mixed '(' + ${} + ')' in th:text.
+                            -->
+                            <span class="text-muted ms-1"
+                                  th:text="|(${product.averageRating})|"></span>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="d-flex justify-content-center align-items-center gap-2 mb-3 mt-auto">
+                            <!--
+                                FIX: Use literal substitution |$${product.price}|
+                                     instead of invalid mixed '$' + ${product.price} in th:text.
+                            -->
+                            <span class="fw-bold text-primary fs-5"
+                                  th:text="|$${product.price}|">$0.00</span>
+                        </div>
+
+                        <a th:href="@{/products/{slug}(slug=${product.slug})}"
+                           class="btn btn-primary btn-sm w-100 rounded-pill fw-medium">
+                            <i class="bi bi-eye me-1"></i>View Deal
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Pagination ────────────────────────────────────────────────────── -->
+        <nav th:if="${totalPages > 1}" class="mt-5 d-flex justify-content-center" aria-label="Deals pages">
+            <ul class="pagination pagination-lg">
+                <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                    <a class="page-link rounded-start-pill border-0 shadow-sm"
+                       th:href="@{/deals(page=${currentPage - 1}, sort=${currentSort})}">&laquo;</a>
+                </li>
+                <li class="page-item"
+                    th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:classappend="${currentPage == i ? 'active' : ''}">
+                    <a class="page-link border-0 shadow-sm mx-1 rounded-circle"
+                       th:href="@{/deals(page=${i}, sort=${currentSort})}"
+                       th:text="${i + 1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                    <a class="page-link rounded-end-pill border-0 shadow-sm"
+                       th:href="@{/deals(page=${currentPage + 1}, sort=${currentSort})}">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
+
+    </div><!-- /container -->
+</div><!-- /th:fragment="content" -->
+
+<!-- ── Page-scoped scripts injected at the layout footer ────────────────────── -->
+<th:block th:fragment="scripts">
+    <script type="module" th:src="@{/js/app.js}"></script>
+</th:block>
+
+</body>
+</html>

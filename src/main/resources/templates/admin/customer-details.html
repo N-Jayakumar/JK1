@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: html(title='Customer Details | JKØ', activeTab='customers', content=~{::content})}">
+<head>
+    <title>Customer Details</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="mb-4">
+            <a th:href="@{/admin/customers}" class="text-decoration-none text-dark small fw-bold text-uppercase" style="letter-spacing: 1px;">
+                <i class="bi bi-arrow-left me-1"></i> Back to Customers
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <!-- Profile Info -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 mb-4 text-center">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="bg-dark text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="bi bi-person-fill" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h4 class="fw-bold mb-1" th:text="${customer.firstName + ' ' + customer.lastName}">John Doe</h4>
+                        <p class="text-muted small mb-4" th:text="${customer.email}">email@example.com</p>
+                        
+                        <div class="mb-4">
+                            <span class="badge rounded-pill px-4 py-2"
+                                  th:classappend="${customer.accountStatus.name() == 'ACTIVE' ? 'bg-success' : 'bg-danger'}"
+                                  th:text="${customer.accountStatus}">STATUS</span>
+                        </div>
+
+                        <form th:action="@{/admin/customers/{id}/toggle-status(id=${customer.id})}" method="post">
+                            <button type="submit" class="btn w-100 rounded-pill text-uppercase fw-semibold" style="letter-spacing: 1px;"
+                                    th:classappend="${customer.accountStatus.name() == 'ACTIVE' ? 'btn-outline-danger' : 'btn-outline-success'}"
+                                    th:text="${customer.accountStatus.name() == 'ACTIVE' ? 'Lock Account' : 'Activate Account'}">
+                                Toggle Status
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders & Addresses -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-body p-4 p-md-5">
+                        <h5 class="fw-bold text-uppercase mb-4" style="letter-spacing: 1px;">Order History</h5>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead>
+                                    <tr class="text-uppercase text-muted" style="font-size: 0.75rem; letter-spacing: 1px;">
+                                        <th class="border-0">Order #</th>
+                                        <th class="border-0">Date</th>
+                                        <th class="border-0">Status</th>
+                                        <th class="border-0 text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="order : ${customer.orders}">
+                                        <td class="py-3">
+                                            <a th:href="@{/admin/orders/{id}(id=${order.id})}" class="text-decoration-none fw-bold font-monospace" th:text="${order.orderNumber}">#123</a>
+                                        </td>
+                                        <td class="py-3 text-muted small" th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy')}">Date</td>
+                                        <td class="py-3">
+                                            <span class="badge rounded-pill px-2 py-1"
+                                                  th:classappend="${order.orderStatus.name() == 'DELIVERED' ? 'bg-success bg-opacity-10 text-success' : 'bg-warning bg-opacity-10 text-dark'}"
+                                                  th:text="${order.orderStatus}">Status</span>
+                                        </td>
+                                        <td class="py-3 text-end fw-bold" th:text="${'$' + order.totalAmount}">$0.00</td>
+                                    </tr>
+                                    <tr th:if="${customer.orders.empty}">
+                                        <td colspan="4" class="text-center py-4 text-muted">No orders placed yet.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4 p-md-5">
+                        <h5 class="fw-bold text-uppercase mb-4" style="letter-spacing: 1px;">Addresses</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6" th:each="address : ${customer.addresses}">
+                                <div class="bg-light p-4 rounded-4 h-100 border position-relative">
+                                    <span th:if="${address.isDefault}" class="badge bg-dark position-absolute top-0 end-0 m-3 rounded-pill">Default</span>
+                                    <address class="mb-0 small text-muted" style="line-height: 1.8;">
+                                        <strong class="text-dark d-block mb-2 fs-6" th:text="${address.fullName}">Name</strong>
+                                        <span th:text="${address.streetAddress}">Street</span><br>
+                                        <span th:text="${address.city + ', ' + address.state + ' ' + address.zipCode}">City</span><br>
+                                        <span th:text="${address.country}">Country</span><br>
+                                        <span class="mt-2 d-block"><i class="bi bi-telephone me-2"></i><span th:text="${address.phone}">Phone</span></span>
+                                    </address>
+                                </div>
+                            </div>
+                            <div th:if="${customer.addresses.empty}" class="col-12 text-center py-3 text-muted">
+                                No addresses saved.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    <!-- JS Integration -->
+    <script type="module" th:src="@{/js/app.js}"></script>
+    <script type="module" th:src="@{/js/pages/admin/customer-details.js}"></script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main :: layout(~{::title}, ~{::content}, ~{::styles}, ~{::scripts})}">
+<head>
+    <title>Home - JK1 Premium E-Commerce</title>
+</head>
+<body>
+    <th:block th:fragment="styles">
+        <link rel="stylesheet" th:href="@{/css/pages/home.css}">
+    </th:block>
+
+    <div th:fragment="content">
+        <!-- 1. Hero Section -->
+        <section class="hero-section text-white" x-data="{ loaded: false }" x-init="setTimeout(() => loaded = true, 100)">
+            <div class="hero-overlay"></div>
+            <div class="container hero-content">
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div x-show="loaded" x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0 translate-y-12" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+                            <span class="badge bg-primary px-3 py-2 rounded-pill mb-4 text-uppercase tracking-wide">New Collection 2026</span>
+                            <h1 class="display-2 fw-bold font-poppins mb-4 lh-sm">Redefine Your<br>Premium Style</h1>
+                            <p class="lead mb-5 opacity-75 fw-light" style="max-width: 500px;">Discover the latest trends and exclusive collections tailored for modern elegance and unparalleled comfort.</p>
+                            <div class="d-flex gap-3">
+                                <a th:href="@{/products}" class="btn btn-primary btn-lg rounded-pill px-5 fw-medium shadow-sm">Shop Now</a>
+                                <a th:href="@{/products}" class="btn btn-outline-light btn-lg rounded-pill px-5 fw-medium">Explore</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Features Section -->
+        <section class="py-5 bg-white border-bottom">
+            <div class="container">
+                <div class="row g-4 text-center">
+                    <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="0">
+                        <div class="mb-3"><i class="bi bi-shield-check fs-1 text-primary"></i></div>
+                        <h6 class="fw-bold font-poppins">Premium Quality</h6>
+                        <p class="text-muted text-sm mb-0">Crafted with excellence</p>
+                    </div>
+                    <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="100">
+                        <div class="mb-3"><i class="bi bi-truck fs-1 text-primary"></i></div>
+                        <h6 class="fw-bold font-poppins">Fast Delivery</h6>
+                        <p class="text-muted text-sm mb-0">Free shipping worldwide</p>
+                    </div>
+                    <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="200">
+                        <div class="mb-3"><i class="bi bi-credit-card fs-1 text-primary"></i></div>
+                        <h6 class="fw-bold font-poppins">Secure Payment</h6>
+                        <p class="text-muted text-sm mb-0">100% secure checkout</p>
+                    </div>
+                    <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="300">
+                        <div class="mb-3"><i class="bi bi-arrow-return-left fs-1 text-primary"></i></div>
+                        <h6 class="fw-bold font-poppins">Easy Returns</h6>
+                        <p class="text-muted text-sm mb-0">30-day return policy</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Category Section -->
+        <section class="py-5 my-5">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-end mb-5" data-aos="fade-right">
+                    <div>
+                        <h2 class="fw-bold font-poppins mb-1">Shop by Category</h2>
+                        <p class="text-muted mb-0">Explore our curated collections</p>
+                    </div>
+                    <a th:href="@{/products}" class="btn btn-link text-decoration-none text-primary fw-medium">View All <i class="bi bi-arrow-right"></i></a>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="0">
+                        <div class="category-card shadow-sm">
+                            <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=600&auto=format&fit=crop" alt="Men">
+                            <div class="category-overlay">
+                                <h3 class="fw-bold font-poppins mb-0">Men's Collection</h3>
+                                <p class="text-white-50 mb-0">240 Products</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="100">
+                        <div class="category-card shadow-sm">
+                            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=600&auto=format&fit=crop" alt="Women">
+                            <div class="category-overlay">
+                                <h3 class="fw-bold font-poppins mb-0">Women's Collection</h3>
+                                <p class="text-white-50 mb-0">350 Products</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12" data-aos="zoom-in" data-aos-delay="200">
+                        <div class="category-card shadow-sm">
+                            <img src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=600&auto=format&fit=crop" alt="Accessories">
+                            <div class="category-overlay">
+                                <h3 class="fw-bold font-poppins mb-0">Luxury Accessories</h3>
+                                <p class="text-white-50 mb-0">120 Products</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Dynamic Products Sections -->
+        <!-- Featured Products -->
+        <section class="py-5 bg-light" th:if="${featuredProducts != null and !featuredProducts.isEmpty()}">
+            <div class="container my-4">
+                <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
+                    <div>
+                        <h2 class="fw-bold font-poppins mb-1">Featured Products</h2>
+                        <p class="text-muted mb-0">Handpicked for you</p>
+                    </div>
+                    <a th:href="@{/products(search='')}" class="btn btn-link text-decoration-none text-primary fw-medium">View All <i class="bi bi-arrow-right"></i></a>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-6" th:each="product : ${featuredProducts}" data-aos="fade-up">
+                        <div class="product-card h-100 shadow-sm bg-white">
+                            <div class="product-image-container position-relative">
+                                <a th:href="@{/products/{slug}(slug=${product.slug})}">
+                                    <img th:src="${product.imageUrl != null ? product.imageUrl : 'https://placehold.co/600x800/2a2a2a/ffffff?text=' + product.name}" class="img-fluid" th:alt="${product.name}">
+                                </a>
+                                <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-3 px-2 py-1">Featured</span>
+                            </div>
+                            <div class="p-4 text-center">
+                                <h5 class="fw-bold font-poppins text-dark mb-1 text-truncate" th:text="${product.name}">Product Name</h5>
+                                <p class="text-muted text-sm mb-3" th:text="${product.categoryName}">Category</p>
+                                <div class="d-flex justify-content-center gap-2 align-items-center">
+                                    <h5 class="fw-bold text-primary mb-0" th:text="${'$' + product.price}">$0.00</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Best Sellers -->
+        <section class="py-5 bg-white" th:if="${bestSellers != null and !bestSellers.isEmpty()}">
+            <div class="container my-4">
+                <div class="d-flex justify-content-between align-items-end mb-4" data-aos="fade-right">
+                    <div>
+                        <h2 class="fw-bold font-poppins mb-1">Best Sellers</h2>
+                        <p class="text-muted mb-0">Our most popular items</p>
+                    </div>
+                    <a th:href="@{/products(search='')}" class="btn btn-link text-decoration-none text-primary fw-medium">View All <i class="bi bi-arrow-right"></i></a>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-6" th:each="product : ${bestSellers}" data-aos="fade-up">
+                        <div class="product-card h-100 shadow-sm bg-light">
+                            <div class="product-image-container position-relative">
+                                <a th:href="@{/products/{slug}(slug=${product.slug})}">
+                                    <img th:src="${product.imageUrl != null ? product.imageUrl : 'https://placehold.co/600x800/2a2a2a/ffffff?text=' + product.name}" class="img-fluid" th:alt="${product.name}">
+                                </a>
+                                <span class="badge bg-danger position-absolute top-0 start-0 m-3 px-2 py-1">Hot</span>
+                            </div>
+                            <div class="p-4 text-center">
+                                <h5 class="fw-bold font-poppins text-dark mb-1 text-truncate" th:text="${product.name}">Product Name</h5>
+                                <p class="text-muted text-sm mb-3" th:text="${product.categoryName}">Category</p>
+                                <div class="d-flex justify-content-center gap-2 align-items-center">
+                                    <h5 class="fw-bold text-primary mb-0" th:text="${'$' + product.price}">$0.00</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- New Arrivals -->
+        <section class="py-5 bg-light" th:if="${newArrivals != null and !newArrivals.isEmpty()}">
+            <div class="container my-4">
+                <div class="text-center mb-5" data-aos="fade-up">
+                    <h2 class="fw-bold font-poppins mb-2">New Arrivals</h2>
+                    <p class="text-muted mx-auto" style="max-width: 600px;">The latest additions to our premium collection.</p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-6" th:each="product : ${newArrivals}" data-aos="fade-up">
+                        <div class="product-card h-100 shadow-sm bg-white">
+                            <div class="product-image-container position-relative">
+                                <a th:href="@{/products/{slug}(slug=${product.slug})}">
+                                    <img th:src="${product.imageUrl != null ? product.imageUrl : 'https://placehold.co/600x800/2a2a2a/ffffff?text=' + product.name}" class="img-fluid" th:alt="${product.name}">
+                                </a>
+                                <span class="badge bg-dark position-absolute top-0 start-0 m-3 px-2 py-1">NEW</span>
+                            </div>
+                            <div class="p-4 text-center">
+                                <h5 class="fw-bold font-poppins text-dark mb-1 text-truncate" th:text="${product.name}">Product Name</h5>
+                                <p class="text-muted text-sm mb-3" th:text="${product.categoryName}">Category</p>
+                                <div class="d-flex justify-content-center gap-2 align-items-center">
+                                    <h5 class="fw-bold text-primary mb-0" th:text="${'$' + product.price}">$0.00</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Promotional Banner -->
+        <section class="container my-5">
+            <div class="promo-banner shadow-lg text-center" data-aos="zoom-in">
+                <div class="promo-overlay"></div>
+                <div class="position-relative z-2 text-white p-4">
+                    <span class="badge bg-danger px-3 py-2 rounded-pill mb-3">Limited Time</span>
+                    <h2 class="display-5 fw-bold font-poppins mb-3">End of Season Sale</h2>
+                    <p class="lead mb-4 fw-light mx-auto" style="max-width: 600px;">Get up to 50% off on selected premium items. Upgrade your wardrobe today.</p>
+                    <a th:href="@{/deals}" class="btn btn-light btn-lg rounded-pill px-5 fw-medium text-dark shadow-sm">Shop The Sale</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Brand Story & 7. Testimonials -->
+        <section class="py-5 bg-white border-top">
+            <div class="container my-4">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-6" data-aos="fade-right">
+                        <h6 class="text-primary fw-bold text-uppercase tracking-wide mb-2">Our Story</h6>
+                        <h2 class="display-6 fw-bold font-poppins mb-4">Elevating Everyday Elegance</h2>
+                        <p class="text-muted mb-4 lead fw-light">JK1 was founded with a single mission: to provide uncompromising quality and exceptional design accessible to everyone. We believe that what you wear is an extension of who you are.</p>
+                        <ul class="list-unstyled d-flex flex-column gap-3 mb-4">
+                            <li class="d-flex align-items-center"><i class="bi bi-check2-circle text-primary fs-4 me-3"></i> <span class="fw-medium">Ethically sourced materials</span></li>
+                            <li class="d-flex align-items-center"><i class="bi bi-check2-circle text-primary fs-4 me-3"></i> <span class="fw-medium">Carbon neutral shipping</span></li>
+                            <li class="d-flex align-items-center"><i class="bi bi-check2-circle text-primary fs-4 me-3"></i> <span class="fw-medium">Unmatched attention to detail</span></li>
+                        </ul>
+                        <a href="#" class="btn btn-outline-dark rounded-pill px-4">Read Our Full Story</a>
+                    </div>
+                    <div class="col-lg-6" data-aos="fade-left">
+                        <div class="testimonial-card">
+                            <i class="bi bi-quote quote-icon"></i>
+                            <div class="d-flex text-warning mb-3">
+                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                            </div>
+                            <p class="fs-5 fst-italic text-dark mb-4">"Absolutely incredible quality. I've shopped at many premium stores, but the attention to detail and customer service at JK1 is truly unparalleled."</p>
+                            <div class="d-flex align-items-center">
+                                <img src="https://ui-avatars.com/api/?name=Sarah+Jenkins&background=0d6efd&color=fff" class="rounded-circle shadow-sm me-3" width="50" height="50" alt="Sarah">
+                                <div>
+                                    <h6 class="fw-bold font-poppins mb-0">Sarah Jenkins</h6>
+                                    <p class="text-muted text-sm mb-0">Verified Buyer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. Newsletter Section -->
+        <section class="py-5 bg-light border-top">
+            <div class="container text-center py-4" data-aos="fade-up">
+                <i class="bi bi-envelope-paper fs-1 text-primary mb-3 d-inline-block"></i>
+                <h2 class="fw-bold font-poppins mb-3">Join the JK1 Community</h2>
+                <p class="text-muted mb-4 mx-auto" style="max-width: 500px;">Subscribe to our newsletter for exclusive offers, early access to new collections, and styling tips.</p>
+                <form class="d-flex justify-content-center gap-2 mx-auto" style="max-width: 500px;" x-data="{ email: '', subscribed: false }" @submit.prevent="subscribed = true; email = ''">
+                    <div x-show="!subscribed" class="d-flex w-100 gap-2">
+                        <input type="email" x-model="email" class="form-control form-control-lg rounded-pill px-4 shadow-sm border-0" placeholder="Enter your email address" required>
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm">Subscribe</button>
+                    </div>
+                    <div x-show="subscribed" x-transition class="alert alert-success rounded-pill w-100 mb-0 border-0 shadow-sm text-center" style="display: none;">
+                        <i class="bi bi-check-circle-fill me-2"></i> Thank you for subscribing!
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    
+    <th:block th:fragment="scripts">
+    <!-- JS Integration -->
+    <script type="module" th:src="@{/js/app.js}"></script>
+    <script type="module" th:src="@{/js/pages/home/index.js}"></script>
+</th:block>
+</body>
+</html>

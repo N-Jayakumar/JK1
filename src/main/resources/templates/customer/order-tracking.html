@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{customer/layout :: html(title='Track Order | JKØ', activeTab='orders', content=~{::content})}">
+<head>
+    <title>Track Order | JKØ</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="mb-4">
+            <a th:href="@{/account/orders}" class="text-decoration-none text-dark small fw-bold text-uppercase" style="letter-spacing: 1px;">
+                <i class="bi bi-arrow-left me-1"></i> Back to Orders
+            </a>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4 p-md-5">
+                <div class="row align-items-center border-bottom pb-4 mb-5">
+                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                        <h4 class="fw-bold mb-1 text-uppercase" style="letter-spacing: 1px;">Track Order</h4>
+                        <p class="text-muted mb-0 font-monospace">#<span th:text="${order.orderNumber}">123</span></p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <p class="text-muted small text-uppercase mb-1" style="letter-spacing: 1px;">Expected Arrival</p>
+                        <h5 class="fw-bold mb-0" style="font-family: 'Playfair Display', serif;" th:text="${#temporals.format(order.createdAt.plusDays(5), 'MMM dd, yyyy')}">Date</h5>
+                    </div>
+                </div>
+
+                <!-- Progress Bar UI -->
+                <div class="position-relative mt-5 mb-5 pb-3">
+                    <div class="progress" style="height: 4px;">
+                        <div class="progress-bar bg-dark" role="progressbar" 
+                             th:style="${order.orderStatus.name() == 'PENDING' ? 'width: 25%' : (order.orderStatus.name() == 'PROCESSING' ? 'width: 50%' : (order.orderStatus.name() == 'SHIPPED' ? 'width: 75%' : 'width: 100%'))}">
+                        </div>
+                    </div>
+                    
+                    <div class="position-absolute top-0 start-0 translate-middle text-center" style="width: 100px;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2 text-white"
+                             th:classappend="${order.orderStatus.name() == 'PENDING' || order.orderStatus.name() == 'PROCESSING' || order.orderStatus.name() == 'SHIPPED' || order.orderStatus.name() == 'DELIVERED' ? 'bg-dark' : 'bg-secondary'}"
+                             style="width: 40px; height: 40px; margin-top: -18px;">
+                            <i class="bi bi-receipt"></i>
+                        </div>
+                        <span class="d-block small fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 1px;">Placed</span>
+                    </div>
+
+                    <div class="position-absolute top-0 start-25 translate-middle text-center" style="width: 100px;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2 text-white"
+                             th:classappend="${order.orderStatus.name() == 'PROCESSING' || order.orderStatus.name() == 'SHIPPED' || order.orderStatus.name() == 'DELIVERED' ? 'bg-dark' : 'bg-secondary'}"
+                             style="width: 40px; height: 40px; margin-top: -18px;">
+                            <i class="bi bi-box"></i>
+                        </div>
+                        <span class="d-block small fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 1px;">Processing</span>
+                    </div>
+
+                    <div class="position-absolute top-0 start-50 translate-middle text-center" style="width: 100px;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2 text-white"
+                             th:classappend="${order.orderStatus.name() == 'SHIPPED' || order.orderStatus.name() == 'DELIVERED' ? 'bg-dark' : 'bg-secondary'}"
+                             style="width: 40px; height: 40px; margin-top: -18px;">
+                            <i class="bi bi-truck"></i>
+                        </div>
+                        <span class="d-block small fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 1px;">Shipped</span>
+                    </div>
+
+                    <div class="position-absolute top-0 start-100 translate-middle text-center" style="width: 100px;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2 text-white"
+                             th:classappend="${order.orderStatus.name() == 'DELIVERED' ? 'bg-dark' : 'bg-secondary'}"
+                             style="width: 40px; height: 40px; margin-top: -18px;">
+                            <i class="bi bi-house-door"></i>
+                        </div>
+                        <span class="d-block small fw-bold text-uppercase" style="font-size: 0.7rem; letter-spacing: 1px;">Delivered</span>
+                    </div>
+                </div>
+
+                <div class="bg-light p-4 rounded-4 mt-5">
+                    <h6 class="fw-bold text-uppercase mb-3" style="letter-spacing: 1px; font-size: 0.85rem;">Shipping Details</h6>
+                    <p class="mb-0 fw-bold" th:text="${order.shippingAddress.addressType}">Home</p>
+                    <p class="mb-0 small text-muted" th:text="${order.shippingAddress.street}">Street</p>
+                    <p class="mb-0 small text-muted"><span th:text="${order.shippingAddress.city}">City</span>, <span th:text="${order.shippingAddress.state}">State</span> <span th:text="${order.shippingAddress.zipCode}">Zip</span></p>
+                </div>
+            </div>
+        </div>
+    
+    <!-- JS Integration -->
+    <script type="module" th:src="@{/js/app.js}"></script>
+    <script type="module" th:src="@{/js/pages/customer/order-tracking.js}"></script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,434 @@
+/* ============================================================
+   JKØ — Product Catalog Styles
+   Covers: list.html, details.html
+   ============================================================ */
+
+/* ── Import Google Font (Poppins is already in layout head,
+      this file handles page-specific overrides) ────────────── */
+
+/* ────────────────────────────────────────────────────────────
+   PRODUCT LIST — Filter Sidebar
+   ──────────────────────────────────────────────────────────── */
+
+.product-filter-sidebar {
+    background: #fff;
+    border-radius: 1.25rem;
+    padding: 1.75rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    transition: box-shadow 0.3s ease;
+}
+
+.product-filter-sidebar:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.filter-group-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #1a1a2e;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    user-select: none;
+}
+
+.form-check-input:checked {
+    background-color: var(--jk1-primary, #0d6efd);
+    border-color: var(--jk1-primary, #0d6efd);
+}
+
+/* ────────────────────────────────────────────────────────────
+   PRODUCT LIST — Grid Cards
+   ──────────────────────────────────────────────────────────── */
+
+.product-card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 1.25rem;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.35s ease;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Image container with consistent aspect ratio */
+.product-image-container {
+    background: #f8f9fa;
+    overflow: hidden;
+    position: relative;
+}
+
+.product-image-container img {
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+}
+
+.product-card:hover .product-image-container img {
+    transform: scale(1.07);
+}
+
+/* Wishlist heart button on card */
+.wishlist-btn {
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(4px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.25s ease, background 0.25s ease;
+    z-index: 2;
+}
+
+.wishlist-btn:hover {
+    transform: scale(1.15);
+    background: #fff;
+}
+
+.wishlist-btn.active i,
+.wishlist-btn:hover i {
+    color: #e53e3e;
+}
+
+/* Rating stars */
+.star-rating {
+    display: inline-flex;
+    gap: 2px;
+    color: #f6ad55;
+}
+
+/* Discount badge */
+.badge-discount {
+    background: linear-gradient(135deg, #e53e3e, #c53030);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border-radius: 50rem;
+    padding: 0.3rem 0.65rem;
+}
+
+/* Stock badges */
+.badge-low-stock {
+    background: linear-gradient(135deg, #d69e2e, #b7791f);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 50rem;
+    padding: 0.3rem 0.65rem;
+}
+
+.badge-out-of-stock {
+    background: #718096;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 50rem;
+    padding: 0.3rem 0.65rem;
+}
+
+/* Original price strikethrough on cards */
+.price-original {
+    text-decoration: line-through;
+    color: #a0aec0;
+    font-size: 0.85rem;
+}
+
+.price-discounted {
+    color: #e53e3e;
+    font-weight: 700;
+}
+
+/* Empty state */
+.empty-state-icon {
+    font-size: 4rem;
+    opacity: 0.15;
+}
+
+/* ────────────────────────────────────────────────────────────
+   PRODUCT LIST — Loading Skeleton
+   ──────────────────────────────────────────────────────────── */
+
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        #f0f0f0 25%,
+        #e0e0e0 50%,
+        #f0f0f0 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+    border-radius: 0.5rem;
+}
+
+@keyframes skeleton-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skeleton-card {
+    border-radius: 1.25rem;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.skeleton-img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+}
+
+.skeleton-text {
+    height: 14px;
+    margin: 0.5rem 1rem;
+}
+
+.skeleton-text-sm {
+    height: 10px;
+    margin: 0.35rem 1.5rem;
+}
+
+/* ────────────────────────────────────────────────────────────
+   PRODUCT LIST — Pagination
+   ──────────────────────────────────────────────────────────── */
+
+.pagination .page-link {
+    border-radius: 50% !important;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin: 0 3px;
+    color: #4a5568;
+    border: 1px solid #e2e8f0;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.pagination .page-item.active .page-link {
+    background: var(--jk1-primary, #0d6efd);
+    border-color: var(--jk1-primary, #0d6efd);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(13, 110, 253, 0.4);
+}
+
+.pagination .page-link:hover:not(.disabled) {
+    background: #ebf4ff;
+    color: var(--jk1-primary, #0d6efd);
+    transform: scale(1.1);
+}
+
+/* ────────────────────────────────────────────────────────────
+   PRODUCT DETAILS — Image Gallery
+   ──────────────────────────────────────────────────────────── */
+
+.product-gallery-main {
+    border-radius: 1.25rem;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    height: 500px;
+    background: #f8f9fa;
+    position: relative;
+}
+
+.product-gallery-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+    cursor: zoom-in;
+}
+
+.product-gallery-main:hover img {
+    /* JS handles transform-origin on mousemove for zoom */
+}
+
+.product-gallery-thumb {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.25s ease, opacity 0.25s ease;
+    height: 90px;
+    background: #f8f9fa;
+}
+
+.product-gallery-thumb:hover {
+    opacity: 0.85;
+}
+
+.product-gallery-thumb.active {
+    border-color: var(--jk1-primary, #0d6efd);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+}
+
+.product-gallery-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ────────────────────────────────────────────────────────────
+   PRODUCT DETAILS — Info Panel
+   ──────────────────────────────────────────────────────────── */
+
+/* Quantity selector */
+.quantity-selector {
+    display: inline-flex;
+    align-items: center;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 50rem;
+    padding: 0.2rem;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.quantity-selector button {
+    background: transparent;
+    border: none;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s, transform 0.15s;
+    font-size: 1rem;
+    color: #4a5568;
+}
+
+.quantity-selector button:hover {
+    background: #edf2f7;
+    transform: scale(1.1);
+}
+
+.quantity-selector input {
+    border: none;
+    text-align: center;
+    width: 48px;
+    background: transparent;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #1a202c;
+}
+
+.quantity-selector input:focus {
+    outline: none;
+}
+
+/* Price block */
+.price-block .price-current {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--jk1-primary, #0d6efd);
+    line-height: 1;
+}
+
+.price-block .price-was {
+    font-size: 1rem;
+    color: #a0aec0;
+    text-decoration: line-through;
+    margin-left: 0.5rem;
+}
+
+.price-block .price-save-badge {
+    background: linear-gradient(135deg, #e53e3e, #c53030);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 50rem;
+    padding: 0.2rem 0.6rem;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+}
+
+/* Trust badges */
+.trust-badges p {
+    font-size: 0.875rem;
+    color: #718096;
+    margin-bottom: 0.5rem;
+}
+
+/* ────────────────────────────────────────────────────────────
+   PRODUCT DETAILS — Related Products / Complete The Look
+   ──────────────────────────────────────────────────────────── */
+
+.section-divider {
+    border-top: 1px solid #e2e8f0;
+    margin-top: 4rem;
+    padding-top: 3rem;
+}
+
+.related-card {
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.06);
+}
+
+.related-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+}
+
+.related-card img {
+    transition: transform 0.4s ease;
+}
+
+.related-card:hover img {
+    transform: scale(1.06);
+}
+
+/* ────────────────────────────────────────────────────────────
+   UTILITIES (page-scoped)
+   ──────────────────────────────────────────────────────────── */
+
+.text-xs   { font-size: 0.75rem; }
+.text-sm   { font-size: 0.875rem; }
+.fw-800    { font-weight: 800; }
+.tracking-wider { letter-spacing: 0.08em; }
+.cursor-pointer { cursor: pointer; }
+.hover-lift {
+    transition: transform 0.3s ease;
+}
+.hover-lift:hover {
+    transform: translateY(-4px);
+}
+.transition-all {
+    transition: all 0.3s ease;
+}
+
+/* ────────────────────────────────────────────────────────────
+   RESPONSIVE OVERRIDES
+   ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 991.98px) {
+    .product-filter-sidebar {
+        position: static !important;
+    }
+
+    .product-gallery-main {
+        height: 320px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .product-gallery-main {
+        height: 260px;
+    }
+
+    .quantity-selector input {
+        width: 40px;
+    }
+}

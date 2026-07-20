@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: html(title='Orders | JKØ', activeTab='orders', content=~{::content})}">
+<head>
+    <title>Orders</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold mb-0" style="font-family: 'Playfair Display', serif; letter-spacing: 1px;">Order Management</h3>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="bg-light text-uppercase text-muted" style="font-size: 0.75rem; letter-spacing: 1px;">
+                        <tr>
+                            <th class="py-3 px-4 fw-semibold border-0">Order #</th>
+                            <th class="py-3 fw-semibold border-0">Customer</th>
+                            <th class="py-3 fw-semibold border-0">Date</th>
+                            <th class="py-3 fw-semibold border-0">Status</th>
+                            <th class="py-3 fw-semibold border-0">Total</th>
+                            <th class="py-3 px-4 fw-semibold border-0 text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="order : ${orderPage.content}">
+                            <td class="py-3 px-4 fw-bold font-monospace small" th:text="${order.orderNumber}">ORD123</td>
+                            <td class="py-3 text-muted small" th:text="${order.user.firstName + ' ' + order.user.lastName}">John Doe</td>
+                            <td class="py-3 text-muted small" th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy HH:mm')}">Date</td>
+                            <td class="py-3">
+                                <span class="badge rounded-pill px-3 py-2 fw-semibold"
+                                      th:classappend="${order.orderStatus.name() == 'DELIVERED' ? 'bg-success' : (order.orderStatus.name() == 'CANCELLED' ? 'bg-danger' : 'bg-warning text-dark')}"
+                                      th:text="${order.orderStatus}">STATUS</span>
+                            </td>
+                            <td class="py-3 fw-bold" th:text="${'$' + order.totalAmount}">$0.00</td>
+                            <td class="py-3 px-4 text-end">
+                                <a th:href="@{/admin/orders/{id}(id=${order.id})}" class="btn btn-sm btn-dark rounded-pill px-3">View</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${orderPage.empty}">
+                            <td colspan="6" class="text-center py-5 text-muted">No orders found.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="card-footer bg-white border-top py-3" th:if="${orderPage.totalPages > 1}">
+                <nav>
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item" th:classappend="${orderPage.first ? 'disabled' : ''}">
+                            <a class="page-link rounded-circle border-0" th:href="@{/admin/orders(page=${orderPage.number - 1})}"><i class="bi bi-chevron-left"></i></a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, orderPage.totalPages - 1)}" th:classappend="${orderPage.number == i ? 'active' : ''}">
+                            <a class="page-link rounded-circle border-0 mx-1" th:href="@{/admin/orders(page=${i})}" th:text="${i + 1}" th:classappend="${orderPage.number == i ? 'bg-dark text-white' : 'text-dark'}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${orderPage.last ? 'disabled' : ''}">
+                            <a class="page-link rounded-circle border-0" th:href="@{/admin/orders(page=${orderPage.number + 1})}"><i class="bi bi-chevron-right"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    
+    <!-- JS Integration -->
+    <script type="module" th:src="@{/js/app.js}"></script>
+    <script type="module" th:src="@{/js/pages/admin/orders.js}"></script>
+    </div>
+</body>
+</html>

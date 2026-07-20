@@ -1,0 +1,320 @@
+/* ============================================================
+   JKØ — Search Autocomplete Dropdown Styles
+   Scope: #navbar-search-input + .search-dropdown
+   Loaded globally via layouts/main.html (or injected in header)
+   ============================================================ */
+
+/* ── Search Input Container ───────────────────────────────────────────────── */
+
+.search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    max-width: 420px;
+    width: 100%;
+}
+
+.search-input-field {
+    width: 100%;
+    height: 42px;
+    padding: 0 2.75rem 0 1.25rem;
+    border: 1.5px solid transparent;
+    border-radius: 50rem;
+    background: #f4f6f8;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    color: #1a1a2e;
+    outline: none;
+    transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.search-input-field::placeholder {
+    color: #9ca3af;
+    font-weight: 400;
+}
+
+.search-input-field:focus {
+    background: #fff;
+    border-color: #1A1A1A;
+    box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.08);
+}
+
+.search-submit-btn {
+    position: absolute;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    font-size: 1rem;
+}
+
+.search-submit-btn:hover {
+    color: #1A1A1A;
+}
+
+/* ── Dropdown Container ───────────────────────────────────────────────────── */
+
+.search-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    min-width: 360px;
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.07),
+        0 20px 50px -4px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    z-index: 1050;
+    /* Alpine x-transition target */
+    transform-origin: top center;
+}
+
+/* ── Dropdown Header (loading / no-results state) ─────────────────────────── */
+
+.search-dropdown-loading,
+.search-dropdown-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1.25rem 1rem;
+    color: #9ca3af;
+    font-size: 0.875rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.search-dropdown-empty-icon {
+    font-size: 1.75rem;
+    opacity: 0.35;
+}
+
+/* ── Result List ─────────────────────────────────────────────────────────── */
+
+.search-results-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem 0;
+    max-height: 420px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #e2e8f0 transparent;
+}
+
+.search-results-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.search-results-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.search-results-list::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 2px;
+}
+
+/* ── Individual Result Item ──────────────────────────────────────────────── */
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.65rem 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s ease;
+    border-radius: 0;
+    position: relative;
+}
+
+.search-result-item:hover,
+.search-result-item.is-active {
+    background: #f8f9fa;
+    text-decoration: none;
+    color: inherit;
+}
+
+.search-result-item.is-active {
+    background: #f0f4ff;
+}
+
+/* Left: thumbnail */
+.search-result-thumb {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    border-radius: 0.625rem;
+    object-fit: cover;
+    background: #f4f6f8;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Centre: text block */
+.search-result-info {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.search-result-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+    font-family: 'Inter', sans-serif;
+}
+
+.search-result-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.2rem;
+    flex-wrap: wrap;
+}
+
+.search-result-category {
+    display: inline-block;
+    background: rgba(26, 26, 26, 0.07);
+    color: #374151;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 50rem;
+    white-space: nowrap;
+}
+
+.search-result-brand {
+    font-size: 0.72rem;
+    color: #9ca3af;
+    white-space: nowrap;
+}
+
+/* Right: price block */
+.search-result-price-block {
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.search-result-price {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #111827;
+    display: block;
+    font-family: 'Inter', sans-serif;
+}
+
+.search-result-price.has-discount {
+    color: #dc2626;
+}
+
+.search-result-original-price {
+    font-size: 0.73rem;
+    color: #9ca3af;
+    text-decoration: line-through;
+    display: block;
+}
+
+/* Arrow chevron on active/hovered item */
+.search-result-arrow {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.search-result-item:hover .search-result-arrow,
+.search-result-item.is-active .search-result-arrow {
+    opacity: 1;
+}
+
+/* ── Dropdown Footer ─────────────────────────────────────────────────────── */
+
+.search-dropdown-footer {
+    border-top: 1px solid #f3f4f6;
+    padding: 0.65rem 1rem;
+    background: #fafafa;
+}
+
+.search-view-all-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    background: none;
+    color: #4b5563;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    text-decoration: none;
+}
+
+.search-view-all-btn:hover {
+    background: #f0f4ff;
+    color: #1A1A1A;
+}
+
+/* ── Alpine x-transition classes ─────────────────────────────────────────── */
+
+[x-cloak] { display: none !important; }
+
+/* Dropdown enter / leave animations */
+.search-dropdown-enter {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+}
+.search-dropdown-enter-active {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.search-dropdown-enter-to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.search-dropdown-leave {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+.search-dropdown-leave-active {
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.search-dropdown-leave-to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 991.98px) {
+    .search-wrapper {
+        max-width: 100%;
+    }
+
+    .search-dropdown {
+        min-width: 0;
+        left: -0.5rem;
+        right: -0.5rem;
+    }
+}

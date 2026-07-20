@@ -1,0 +1,22 @@
+:root {
+    /* Premium Men's Formal Fashion Color Palette */
+    --jk1-primary: #1A1A1A; /* Sleek Dark / Black */
+    --jk1-secondary: #7F7F7F; /* Sophisticated Gray */
+    --jk1-accent: #C5A880; /* Elegant Gold/Camel */
+    --jk1-success: #285430; /* Deep Forest Green */
+    --jk1-danger: #800020; /* Burgundy / Wine Red */
+    --jk1-warning: #D4AF37; /* Metallic Gold */
+    --jk1-info: #465A65; /* Slate Blue */
+    --jk1-light: #F9F9F9; /* Off White */
+    --jk1-dark: #0F0F0F; /* Deep Black */
+    
+    --jk1-font-sans: 'Inter', sans-serif;
+    --jk1-font-display: 'Playfair Display', serif; /* Use Playfair for premium feel */
+
+    /* Override Bootstrap variables directly if possible, or we will handle it in global.css */
+    --bs-primary: #1A1A1A;
+    --bs-secondary: #7F7F7F;
+    --bs-dark: #0F0F0F;
+    --bs-light: #F9F9F9;
+    --bs-font-sans-serif: 'Inter', sans-serif;
+}

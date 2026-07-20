@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="sidebar(activeTab)">
+        <div class="card border-0 bg-light rounded-4 h-100">
+            <div class="card-body p-4 p-xl-5">
+                <div class="d-flex align-items-center mb-5">
+                    <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px; font-size: 1.2rem; font-family: 'Playfair Display', serif;">
+                        <span th:text="${#authentication.principal.username.substring(0,1).toUpperCase()}">J</span>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0 text-uppercase" style="letter-spacing: 1px;" th:text="${#authentication.principal.username.split('@')[0]}">User</h6>
+                        <small class="text-muted">Premium Member</small>
+                    </div>
+                </div>
+
+                <div class="list-group list-group-flush border-0">
+                    <a th:href="@{/account/dashboard}" class="list-group-item list-group-item-action bg-transparent border-0 px-0 py-3 d-flex align-items-center"
+                       th:classappend="${activeTab == 'dashboard'} ? 'text-dark fw-bold' : 'text-muted'">
+                        <i class="bi bi-grid me-3 fs-5" th:classappend="${activeTab == 'dashboard'} ? 'text-dark' : 'text-muted'"></i>
+                        <span class="text-uppercase" style="font-size: 0.85rem; letter-spacing: 1px;">Dashboard</span>
+                    </a>
+                    
+                    <a th:href="@{/account/profile}" class="list-group-item list-group-item-action bg-transparent border-0 px-0 py-3 d-flex align-items-center"
+                       th:classappend="${activeTab == 'profile'} ? 'text-dark fw-bold' : 'text-muted'">
+                        <i class="bi bi-person me-3 fs-5" th:classappend="${activeTab == 'profile'} ? 'text-dark' : 'text-muted'"></i>
+                        <span class="text-uppercase" style="font-size: 0.85rem; letter-spacing: 1px;">My Profile</span>
+                    </a>
+
+                    <a th:href="@{/account/orders}" class="list-group-item list-group-item-action bg-transparent border-0 px-0 py-3 d-flex align-items-center"
+                       th:classappend="${activeTab == 'orders'} ? 'text-dark fw-bold' : 'text-muted'">
+                        <i class="bi bi-box-seam me-3 fs-5" th:classappend="${activeTab == 'orders'} ? 'text-dark' : 'text-muted'"></i>
+                        <span class="text-uppercase" style="font-size: 0.85rem; letter-spacing: 1px;">My Orders</span>
+                    </a>
+
+                    <a th:href="@{/account/addresses}" class="list-group-item list-group-item-action bg-transparent border-0 px-0 py-3 d-flex align-items-center"
+                       th:classappend="${activeTab == 'addresses'} ? 'text-dark fw-bold' : 'text-muted'">
+                        <i class="bi bi-geo-alt me-3 fs-5" th:classappend="${activeTab == 'addresses'} ? 'text-dark' : 'text-muted'"></i>
+                        <span class="text-uppercase" style="font-size: 0.85rem; letter-spacing: 1px;">Address Book</span>
+                    </a>
+                    
+                    <a th:href="@{/account/notifications}" class="list-group-item list-group-item-action bg-transparent border-0 px-0 py-3 d-flex align-items-center"
+                       th:classappend="${activeTab == 'notifications'} ? 'text-dark fw-bold' : 'text-muted'">
+                        <i class="bi bi-bell me-3 fs-5" th:classappend="${activeTab == 'notifications'} ? 'text-dark' : 'text-muted'"></i>
+                        <span class="text-uppercase" style="font-size: 0.85rem; letter-spacing: 1px;">Notifications</span>
+                    </a>
+
+                    <a th:href="@{/account/settings}" class="list-group-item list-group-item-action bg-transparent border-0 px-0 py-3 d-flex align-items-center"
+                       th:classappend="${activeTab == 'settings'} ? 'text-dark fw-bold' : 'text-muted'">
+                        <i class="bi bi-shield-lock me-3 fs-5" th:classappend="${activeTab == 'settings'} ? 'text-dark' : 'text-muted'"></i>
+                        <span class="text-uppercase" style="font-size: 0.85rem; letter-spacing: 1px;">Security & Settings</span>
+                    </a>
+
+                    <form th:action="@{/logout}" method="post" class="mt-4">
+                        <button type="submit" class="btn btn-outline-dark w-100 rounded-pill py-2 text-uppercase fw-semibold" style="font-size: 0.8rem; letter-spacing: 1px;">
+                            Sign Out
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

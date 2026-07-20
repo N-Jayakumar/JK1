@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<!--
+    JKØ Global Navbar Fragment
+    ──────────────────────────
+    Included in every page via layouts/main.html:
+        <header th:replace="~{fragments/header :: navbar}"></header>
+
+    Search component: Alpine.data('advancedSearch') defined in /js/components/search.js
+    which is imported by /js/app.js (loaded in main.html before </body>).
+
+    Endpoint used: GET /api/search/suggestions?q={keyword}
+    Response:      AutocompleteResponseDTO[]
+-->
+<header th:fragment="navbar"
+        class="bg-white shadow-sm sticky-top"
+        x-data="{ mobileMenuOpen: false }">
+
+    <nav class="navbar navbar-expand-lg navbar-light py-3">
+        <div class="container">
+
+            <!-- Brand Logo -->
+            <a class="navbar-brand fw-bold fs-3 font-poppins text-dark" th:href="@{/}">
+                JK<span class="text-primary">Ø</span>
+            </a>
+
+            <!-- Mobile menu toggle -->
+            <button class="navbar-toggler border-0 d-lg-none"
+                    type="button"
+                    @click="mobileMenuOpen = !mobileMenuOpen"
+                    aria-label="Toggle navigation"
+                    id="navbar-mobile-toggle">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Desktop Nav -->
+            <div class="collapse navbar-collapse d-none d-lg-flex" id="navbarNav">
+
+                <!-- Left nav links -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-4 fw-medium">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/}" id="nav-home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/categories}" id="nav-categories">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/deals}" id="nav-deals">Deals</a>
+                    </li>
+                </ul>
+
+                <!-- ══ Search Widget ════════════════════════════════════════════ -->
+                <!--
+                    Alpine component: advancedSearch
+                    Defined in: /js/components/search.js
+                    Uses @input (manual debounce inside the component, 300ms)
+                    Uses @keydown for ↑ ↓ Enter Escape navigation
+                    Uses @click.away to close dropdown
+                -->
+                <div x-data="advancedSearch"
+                     class="search-wrapper mx-auto"
+                     style="max-width: 400px;"
+                     @click.away="_closeDropdown()"
+                     role="combobox"
+                     aria-haspopup="listbox"
+                     :aria-expanded="showDropdown">
+
+                    <!-- Input + submit -->
+                    <form class="w-100 position-relative" @submit.prevent="submitSearch">
+                        <input
+                            type="search"
+                            id="navbar-search-input"
+                            name="q"
+                            class="search-input-field"
+                            placeholder="Search products, categories…"
+                            autocomplete="off"
+                            spellcheck="false"
+                            x-model="query"
+                            @input="fetchSuggestions"
+                            @keydown="handleKeydown"
+                            @focus="query.trim().length >= 1 && (showDropdown = true)"
+                            aria-label="Search"
+                            aria-autocomplete="list"
+                            :aria-activedescendant="activeIndex >= 0 ? 'suggestion-' + activeIndex : null">
+                        <button type="submit"
+                                class="search-submit-btn"
+                                id="navbar-search-btn"
+                                aria-label="Submit search">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </form>
+
+                    <!-- ── Suggestions Dropdown ────────────────────────────────── -->
+                    <div x-show="showDropdown"
+                         x-cloak
+                         x-transition:enter="search-dropdown-enter"
+                         x-transition:enter-start="search-dropdown-enter"
+                         x-transition:enter-end="search-dropdown-enter-to"
+                         x-transition:leave="search-dropdown-leave"
+                         x-transition:leave-start="search-dropdown-leave"
+                         x-transition:leave-end="search-dropdown-leave-to"
+                         class="search-dropdown"
+                         role="listbox"
+                         id="search-suggestions-listbox">
+
+                        <!-- Loading spinner -->
+                        <div x-show="loading" class="search-dropdown-loading">
+                            <div class="spinner-border spinner-border-sm text-secondary" style="width:16px;height:16px;border-width:2px;"></div>
+                            <span>Searching…</span>
+                        </div>
+
+                        <!-- No results message -->
+                        <div x-show="!loading && results.length === 0 && query.trim().length >= 1"
+                             class="search-dropdown-empty">
+                            <i class="bi bi-search search-dropdown-empty-icon d-block mb-2" style="font-size:2rem;"></i>
+                            <div>
+                                <p class="mb-1 fw-medium text-dark" style="font-size:0.875rem;">No products found</p>
+                                <p class="mb-0 text-muted" style="font-size:0.78rem;">
+                                    Try "<span x-text="query.trim()"></span>" in a different way.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Error state -->
+                        <div x-show="!loading && errorMessage"
+                             class="search-dropdown-empty text-danger">
+                            <i class="bi bi-exclamation-circle me-1"></i>
+                            <span x-text="errorMessage"></span>
+                        </div>
+
+                        <!-- Results list -->
+                        <ul x-show="!loading && results.length > 0"
+                            class="search-results-list"
+                            role="listbox"
+                            id="search-results-list">
+
+                            <template x-for="(item, index) in results" :key="item.id">
+                                <li role="option"
+                                    :id="'suggestion-' + index"
+                                    :aria-selected="activeIndex === index">
+                                    <a class="search-result-item"
+                                       :class="{ 'is-active': activeIndex === index }"
+                                       :href="'/products/' + item.slug"
+                                       @click.prevent="navigateTo(item.slug)"
+                                       @mouseenter="activeIndex = index">
+
+                                        <!-- Thumbnail -->
+                                        <img :src="item.imageUrl"
+                                             :alt="item.name"
+                                             class="search-result-thumb"
+                                             loading="lazy"
+                                             onerror="this.src='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=100&auto=format&fit=crop'">
+
+                                        <!-- Name + meta -->
+                                        <div class="search-result-info">
+                                            <div class="search-result-name" x-text="item.name"></div>
+                                            <div class="search-result-meta">
+                                                <span class="search-result-category"
+                                                      x-text="item.categoryName"
+                                                      x-show="item.categoryName"></span>
+                                                <span class="search-result-brand"
+                                                      x-text="item.brandName"
+                                                      x-show="item.brandName"></span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Price -->
+                                        <div class="search-result-price-block">
+                                            <!-- Discount price (effective) -->
+                                            <span x-show="hasDiscount(item)"
+                                                  class="search-result-price has-discount"
+                                                  x-text="formatPrice(item.discountPrice)"></span>
+                                            <span x-show="hasDiscount(item)"
+                                                  class="search-result-original-price"
+                                                  x-text="formatPrice(item.price)"></span>
+                                            <!-- Full price (no discount) -->
+                                            <span x-show="!hasDiscount(item)"
+                                                  class="search-result-price"
+                                                  x-text="formatPrice(item.price)"></span>
+                                        </div>
+
+                                        <!-- Hover arrow -->
+                                        <i class="bi bi-arrow-right search-result-arrow"></i>
+
+                                    </a>
+                                </li>
+                            </template>
+                        </ul>
+
+                        <!-- View all results footer -->
+                        <div x-show="!loading && results.length > 0"
+                             class="search-dropdown-footer">
+                            <a :href="'/products?search=' + encodeURIComponent(query.trim())"
+                               class="search-view-all-btn"
+                               id="search-view-all-link">
+                                <i class="bi bi-grid-3x3-gap"></i>
+                                View all results for
+                                &ldquo;<span x-text="query.trim()"></span>&rdquo;
+                            </a>
+                        </div>
+
+                    </div><!-- /search-dropdown -->
+                </div><!-- /search-wrapper -->
+                <!-- ══ End Search Widget ═══════════════════════════════════════ -->
+
+                <!-- Right nav actions -->
+                <ul class="navbar-nav ms-auto align-items-center gap-3">
+
+                    <!-- Wishlist -->
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" th:href="@{/wishlist}" id="nav-wishlist" aria-label="Wishlist">
+                            <i class="bi bi-heart fs-5"></i>
+                            <span class="position-absolute top-25 start-100 translate-middle badge rounded-pill bg-danger"
+                                  style="font-size: 0.6rem;">0</span>
+                        </a>
+                    </li>
+
+                    <!-- Cart -->
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" th:href="@{/cart}" id="nav-cart" aria-label="Cart">
+                            <i class="bi bi-cart3 fs-5"></i>
+                            <span class="position-absolute top-25 start-100 translate-middle badge rounded-pill bg-primary"
+                                  style="font-size: 0.6rem;">0</span>
+                        </a>
+                    </li>
+
+                    <!-- Auth: show Login/Register when anonymous, Account when logged in -->
+                    <li class="nav-item ms-2" sec:authorize="isAnonymous()">
+                        <a class="btn btn-dark rounded-pill px-4 fw-medium" th:href="@{/login}" id="nav-login">Login</a>
+                    </li>
+                    <li class="nav-item ms-2" sec:authorize="isAuthenticated()">
+                        <div class="dropdown">
+                            <a class="btn btn-outline-dark rounded-pill px-4 fw-medium dropdown-toggle"
+                               href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                               id="nav-account-dropdown">
+                                <i class="bi bi-person-circle me-1"></i>Account
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end rounded-3 shadow border-0 mt-2">
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/account/profile}">
+                                        <i class="bi bi-person me-2 text-muted"></i>My Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" th:href="@{/account/orders}">
+                                        <i class="bi bi-bag me-2 text-muted"></i>My Orders
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form th:action="@{/logout}" method="POST" class="d-inline">
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="bi bi-box-arrow-right me-2"></i>Sign Out
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                </ul>
+            </div><!-- /collapse -->
+        </div><!-- /container -->
+    </nav>
+
+    <!-- Mobile Menu (Alpine.js) -->
+    <div class="bg-white px-3 py-4 shadow-lg border-top"
+         x-show="mobileMenuOpen"
+         x-transition.opacity
+         style="display: none;"
+         id="mobile-menu">
+
+        <!-- Mobile search -->
+        <div x-data="advancedSearch"
+             class="search-wrapper mb-3 w-100 position-relative"
+             @click.away="_closeDropdown()">
+            <form @submit.prevent="submitSearch">
+                <input type="search"
+                       id="mobile-search-input"
+                       class="search-input-field w-100"
+                       placeholder="Search products…"
+                       autocomplete="off"
+                       x-model="query"
+                       @input="fetchSuggestions"
+                       @keydown="handleKeydown">
+                <button type="submit" class="search-submit-btn" aria-label="Search">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+
+            <!-- Mobile dropdown (same component, separate instance) -->
+            <div x-show="showDropdown" x-cloak class="search-dropdown" style="min-width:0;">
+                <div x-show="loading" class="search-dropdown-loading">
+                    <div class="spinner-border spinner-border-sm text-secondary" style="width:16px;height:16px;border-width:2px;"></div>
+                    <span>Searching…</span>
+                </div>
+                <div x-show="!loading && results.length === 0 && query.trim().length >= 1"
+                     class="search-dropdown-empty">
+                    <p class="mb-0 text-sm">No products found for "<span x-text="query.trim()"></span>"</p>
+                </div>
+                <ul x-show="!loading && results.length > 0" class="search-results-list">
+                    <template x-for="(item, index) in results" :key="item.id">
+                        <li>
+                            <a class="search-result-item"
+                               :class="{ 'is-active': activeIndex === index }"
+                               :href="'/products/' + item.slug"
+                               @click.prevent="navigateTo(item.slug)">
+                                <img :src="item.imageUrl" :alt="item.name" class="search-result-thumb"
+                                     loading="lazy"
+                                     onerror="this.src='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=100&auto=format&fit=crop'">
+                                <div class="search-result-info">
+                                    <div class="search-result-name" x-text="item.name"></div>
+                                    <div class="search-result-meta">
+                                        <span class="search-result-category" x-text="item.categoryName"></span>
+                                    </div>
+                                </div>
+                                <div class="search-result-price-block">
+                                    <span class="search-result-price"
+                                          :class="{ 'has-discount': hasDiscount(item) }"
+                                          x-text="formatPrice(hasDiscount(item) ? item.discountPrice : item.price)"></span>
+                                </div>
+                            </a>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Mobile nav links -->
+        <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+            <li><a class="text-decoration-none text-dark fw-medium" th:href="@{/}">Home</a></li>
+            <li><a class="text-decoration-none text-dark fw-medium" th:href="@{/categories}">Categories</a></li>
+            <li><a class="text-decoration-none text-dark fw-medium" th:href="@{/deals}">Deals</a></li>
+            <li><a class="text-decoration-none text-dark fw-medium" th:href="@{/cart}">
+                <i class="bi bi-cart3 me-1"></i>Cart
+            </a></li>
+            <li><hr class="my-1"></li>
+            <li sec:authorize="isAnonymous()">
+                <a class="btn btn-dark w-100 rounded-pill fw-medium" th:href="@{/login}">Login / Register</a>
+            </li>
+            <li sec:authorize="isAuthenticated()">
+                <form th:action="@{/logout}" method="POST">
+                    <button type="submit" class="btn btn-outline-danger w-100 rounded-pill fw-medium">
+                        <i class="bi bi-box-arrow-right me-2"></i>Sign Out
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div><!-- /mobile-menu -->
+
+</header>
+</body>
+</html>

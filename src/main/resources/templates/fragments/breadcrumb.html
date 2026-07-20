@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <nav th:fragment="breadcrumb(pageName)" aria-label="breadcrumb" class="py-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${pageName}">Page</li>
+        </ol>
+    </nav>
+</body>
+</html>

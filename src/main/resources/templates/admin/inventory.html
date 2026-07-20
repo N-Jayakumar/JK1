@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: html(title='Inventory | JKØ', activeTab='inventory', content=~{::content})}">
+<head>
+    <title>Inventory</title>
+</head>
+<body>
+    <div th:fragment="content" x-data="{ editingId: null }">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold mb-0" style="font-family: 'Playfair Display', serif; letter-spacing: 1px;">Inventory Management</h3>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="bg-light text-uppercase text-muted" style="font-size: 0.75rem; letter-spacing: 1px;">
+                        <tr>
+                            <th class="py-3 px-4 fw-semibold border-0">Product</th>
+                            <th class="py-3 fw-semibold border-0">SKU</th>
+                            <th class="py-3 fw-semibold border-0">Current Stock</th>
+                            <th class="py-3 fw-semibold border-0">Reserved</th>
+                            <th class="py-3 fw-semibold border-0">Available</th>
+                            <th class="py-3 px-4 fw-semibold border-0 text-end">Update</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="inventory : ${inventoryPage.content}" th:classappend="${inventory.quantity <= 10} ? 'bg-danger bg-opacity-10' : ''">
+                            <td class="py-3 px-4 fw-bold" th:text="${inventory.product.name}">Product</td>
+                            <td class="py-3 text-muted font-monospace small" th:text="${inventory.product.sku}">SKU</td>
+                            <td class="py-3">
+                                <span x-show="editingId !== [[${inventory.id}]]" th:text="${inventory.quantity}" class="fw-bold fs-5">0</span>
+                                <form x-show="editingId === [[${inventory.id}]]" th:action="@{/admin/inventory/update}" method="post" class="d-flex align-items-center gap-2" style="max-width: 150px;" x-cloak>
+                                    <input type="hidden" name="productId" th:value="${inventory.product.id}">
+                                    <input type="number" name="quantity" class="form-control form-control-sm" th:value="${inventory.quantity}" min="0">
+                                    <button type="submit" class="btn btn-sm btn-dark"><i class="bi bi-check"></i></button>
+                                    <button type="button" class="btn btn-sm btn-light" @click="editingId = null"><i class="bi bi-x"></i></button>
+                                </form>
+                            </td>
+                            <td class="py-3 text-muted" th:text="${inventory.reservedQuantity}">0</td>
+                            <td class="py-3">
+                                <span class="badge rounded-pill px-3 py-2" th:classappend="${(inventory.quantity - inventory.reservedQuantity) > 10 ? 'bg-success' : ((inventory.quantity - inventory.reservedQuantity) > 0 ? 'bg-warning text-dark' : 'bg-danger')}" th:text="${inventory.quantity - inventory.reservedQuantity}">0</span>
+                            </td>
+                            <td class="py-3 px-4 text-end">
+                                <button type="button" class="btn btn-sm btn-outline-dark rounded-pill px-3" x-show="editingId !== [[${inventory.id}]]" @click="editingId = [[${inventory.id}]]">
+                                    Update Stock
+                                </button>
+                            </td>
+                        </tr>
+                        <tr th:if="${inventoryPage.empty}">
+                            <td colspan="6" class="text-center py-5 text-muted">No inventory records found.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="card-footer bg-white border-top py-3" th:if="${inventoryPage.totalPages > 1}">
+                <nav>
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item" th:classappend="${inventoryPage.first ? 'disabled' : ''}">
+                            <a class="page-link rounded-circle border-0" th:href="@{/admin/inventory(page=${inventoryPage.number - 1})}"><i class="bi bi-chevron-left"></i></a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, inventoryPage.totalPages - 1)}" th:classappend="${inventoryPage.number == i ? 'active' : ''}">
+                            <a class="page-link rounded-circle border-0 mx-1" th:href="@{/admin/inventory(page=${i})}" th:text="${i + 1}" th:classappend="${inventoryPage.number == i ? 'bg-dark text-white' : 'text-dark'}">1</a>
+                        </li>
+                        <li class="page-item" th:classappend="${inventoryPage.last ? 'disabled' : ''}">
+                            <a class="page-link rounded-circle border-0" th:href="@{/admin/inventory(page=${inventoryPage.number + 1})}"><i class="bi bi-chevron-right"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    
+    <!-- JS Integration -->
+    <script type="module" th:src="@{/js/app.js}"></script>
+    <script type="module" th:src="@{/js/pages/admin/inventory.js}"></script>
+    </div>
+</body>
+</html>

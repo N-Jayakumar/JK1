@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sign in to your JK1 account — Premium eCommerce for modern style.">
+    <title>Login — JK1 Premium</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- JK1 Design Tokens -->
+    <link rel="stylesheet" href="/css/base/variables.css">
+    <link rel="stylesheet" href="/css/base/global.css">
+
+    <style>
+        :root {
+            --jk1-primary:  #1A1A1A;
+            --jk1-accent:   #C5A880;
+            --jk1-light:    #F9F9F9;
+        }
+
+        /* ─── Page shell ─── */
+        html, body {
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            background: #0f0f0f;
+            overflow-x: hidden;
+        }
+
+        /* ─── Split layout ─── */
+        .auth-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh;
+        }
+
+        /* ─── Left: Branding panel ─── */
+        .brand-panel {
+            position: relative;
+            background: linear-gradient(145deg, #111 0%, #1a1a1a 40%, #0d0d0d 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 3rem;
+            overflow: hidden;
+        }
+
+        .brand-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 50% at 10% 30%, rgba(197,168,128,.18) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 60% at 90% 80%, rgba(197,168,128,.10) 0%, transparent 55%);
+            pointer-events: none;
+        }
+
+        .brand-logo {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            color: #fff;
+            letter-spacing: -0.03em;
+            text-decoration: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-logo span {
+            color: var(--jk1-accent);
+        }
+
+        .brand-tagline {
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-tagline h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            line-height: 1.2;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .brand-tagline p {
+            color: rgba(255,255,255,.55);
+            font-size: .95rem;
+            font-weight: 300;
+            max-width: 340px;
+        }
+
+        .brand-features {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: .85rem;
+        }
+
+        .brand-feature {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            color: rgba(255,255,255,.7);
+            font-size: .875rem;
+        }
+
+        .brand-feature i {
+            width: 32px;
+            height: 32px;
+            background: rgba(197,168,128,.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--jk1-accent);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* Decorative circles */
+        .deco-circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(197,168,128,.1);
+            pointer-events: none;
+        }
+        .deco-circle-1 { width: 400px; height: 400px; top: -100px; right: -160px; }
+        .deco-circle-2 { width: 280px; height: 280px; bottom: 60px; left: -80px; }
+        .deco-circle-3 { width: 160px; height: 160px; top: 45%; right: -40px; border-color: rgba(197,168,128,.18); }
+
+        /* ─── Right: Form panel ─── */
+        .form-panel {
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+        }
+
+        .form-box {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .form-box h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.85rem;
+            color: var(--jk1-primary);
+            margin-bottom: .35rem;
+        }
+
+        .form-box .subtitle {
+            color: #6b7280;
+            font-size: .9rem;
+            margin-bottom: 2rem;
+        }
+
+        /* ─── Alert box ─── */
+        .alert-login {
+            border-radius: 12px;
+            font-size: .875rem;
+            padding: .85rem 1rem;
+            margin-bottom: 1.25rem;
+            border: none;
+        }
+
+        /* ─── Input groups ─── */
+        .form-label {
+            font-size: .8rem;
+            font-weight: 600;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            margin-bottom: .4rem;
+        }
+
+        .input-group-auth {
+            position: relative;
+            margin-bottom: 1.25rem;
+        }
+
+        .input-group-auth .form-control {
+            height: 52px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 0 1rem 0 3rem;
+            font-size: .95rem;
+            transition: border-color .2s, box-shadow .2s;
+            background: #fafafa;
+        }
+
+        .input-group-auth .form-control:focus {
+            border-color: var(--jk1-primary);
+            box-shadow: 0 0 0 3px rgba(26,26,26,.08);
+            background: #fff;
+        }
+
+        .input-group-auth .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .input-group-auth .toggle-password {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #9ca3af;
+            font-size: 1rem;
+            z-index: 5;
+            background: none;
+            border: none;
+            padding: 0;
+            line-height: 1;
+            transition: color .2s;
+        }
+
+        .input-group-auth .toggle-password:hover { color: var(--jk1-primary); }
+
+        /* ─── Remember + Forgot row ─── */
+        .form-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-check-label {
+            font-size: .875rem;
+            color: #4b5563;
+        }
+
+        .forgot-link {
+            font-size: .875rem;
+            color: var(--jk1-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity .2s;
+        }
+
+        .forgot-link:hover { opacity: .65; color: var(--jk1-primary); }
+
+        /* ─── Submit button ─── */
+        .btn-login {
+            width: 100%;
+            height: 52px;
+            background: var(--jk1-primary);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: .95rem;
+            letter-spacing: .02em;
+            transition: background .25s, transform .15s, box-shadow .25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+        }
+
+        .btn-login:hover {
+            background: #2d2d2d;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(26,26,26,.25);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        /* ─── Divider ─── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            color: #d1d5db;
+            font-size: .8rem;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e5e7eb;
+        }
+        .divider span { white-space: nowrap; color: #9ca3af; font-weight: 500; }
+
+        /* ─── Register link ─── */
+        .register-link {
+            text-align: center;
+            font-size: .9rem;
+            color: #6b7280;
+            margin-top: 1.5rem;
+        }
+
+        .register-link a {
+            color: var(--jk1-primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: opacity .2s;
+        }
+
+        .register-link a:hover { opacity: .65; }
+
+        /* ─── Responsive: stack on mobile ─── */
+        @media (max-width: 768px) {
+            .auth-wrapper { grid-template-columns: 1fr; }
+            .brand-panel  { display: none; }
+            .form-panel   { padding: 2rem 1.25rem; min-height: 100vh; }
+            .form-box     { max-width: 100%; }
+        }
+
+        /* ─── Loading spinner on submit ─── */
+        .btn-login .spinner-border { display: none; }
+        .btn-login.loading .btn-text { display: none; }
+        .btn-login.loading .spinner-border { display: inline-block; }
+    </style>
+</head>
+<body>
+
+<div class="auth-wrapper">
+
+    <!-- ═══════════════════════════════════════
+         LEFT — Brand panel
+    ════════════════════════════════════════ -->
+    <div class="brand-panel">
+        <!-- Decorative rings -->
+        <div class="deco-circle deco-circle-1"></div>
+        <div class="deco-circle deco-circle-2"></div>
+        <div class="deco-circle deco-circle-3"></div>
+
+        <!-- Logo -->
+        <a href="/" class="brand-logo">JK<span>Ø</span></a>
+
+        <!-- Central tagline -->
+        <div class="brand-tagline">
+            <h2>Welcome<br>Back.</h2>
+            <p>Sign in to access your premium wardrobe, track your orders, and discover exclusive new collections.</p>
+        </div>
+
+        <!-- Feature list -->
+        <div class="brand-features">
+            <div class="brand-feature">
+                <i class="bi bi-shield-check"></i>
+                <span>Secure &amp; encrypted authentication</span>
+            </div>
+            <div class="brand-feature">
+                <i class="bi bi-bag-heart"></i>
+                <span>Access your saved wishlist &amp; cart</span>
+            </div>
+            <div class="brand-feature">
+                <i class="bi bi-truck"></i>
+                <span>Track live order status</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         RIGHT — Login form
+    ════════════════════════════════════════ -->
+    <div class="form-panel">
+        <div class="form-box">
+
+            <!-- Mobile logo (only visible on small screens) -->
+            <div class="d-md-none text-center mb-4">
+                <a href="/" style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1.8rem;color:#1A1A1A;text-decoration:none;">
+                    JK<span style="color:#C5A880;">Ø</span>
+                </a>
+            </div>
+
+            <h1>Sign In</h1>
+            <p class="subtitle">Enter your credentials to continue</p>
+
+            <!-- ─── Error / Logout alerts ─── -->
+            
+
+            
+
+            <!-- ─── Login form ─── -->
+            <!--
+                POST /login is processed by Spring Security's UsernamePasswordAuthenticationFilter.
+                Action, method, and hidden CSRF field are all required.
+            -->
+            

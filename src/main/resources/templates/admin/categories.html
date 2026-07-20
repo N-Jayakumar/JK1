@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout :: html(title='Categories | JKØ', activeTab='categories', content=~{::content})}">
+<head>
+    <title>Categories</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold mb-0" style="font-family: 'Playfair Display', serif; letter-spacing: 1px;">Categories</h3>
+            <a th:href="@{/admin/categories/new}" class="btn btn-dark rounded-pill px-4 text-uppercase fw-semibold" style="letter-spacing: 1px; font-size: 0.8rem;">
+                <i class="bi bi-plus-lg me-2"></i>Add Category
+            </a>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="bg-light text-uppercase text-muted" style="font-size: 0.75rem; letter-spacing: 1px;">
+                        <tr>
+                            <th class="py-3 px-4 fw-semibold border-0">Name</th>
+                            <th class="py-3 fw-semibold border-0">Slug</th>
+                            <th class="py-3 fw-semibold border-0">Parent</th>
+                            <th class="py-3 px-4 fw-semibold border-0 text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="category : ${categoryPage.content}">
+                            <td class="py-3 px-4 fw-bold" th:text="${category.name}">Name</td>
+                            <td class="py-3 text-muted small" th:text="${category.slug}">Slug</td>
+                            <td class="py-3 text-muted small" th:text="${category.parent != null ? category.parent.name : '-'}">Parent</td>
+                            <td class="py-3 px-4 text-end">
+                                <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}" class="btn btn-sm btn-outline-dark rounded-circle me-1"><i class="bi bi-pencil"></i></a>
+                                <a th:href="@{/admin/categories/delete/{id}(id=${category.id})}" class="btn btn-sm btn-outline-danger rounded-circle" data-confirm="Delete this category?"><i class="bi bi-trash"></i></a>
+                            </td>
+                        </tr>
+                        <tr th:if="${categoryPage.empty}">
+                            <td colspan="4" class="text-center py-5 text-muted">No categories found.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    
+    <!-- JS Integration -->
+    <script type="module" th:src="@{/js/app.js}"></script>
+    <script type="module" th:src="@{/js/pages/admin/categories.js}"></script>
+    </div>
+</body>
+</html>
