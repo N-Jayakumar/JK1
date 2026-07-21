@@ -30,7 +30,7 @@
                             <td class="py-3 px-4 fw-medium" th:text="${product.name}">Name</td>
                             <td class="py-3 text-muted font-monospace small" th:text="${product.sku}">SKU</td>
                             <td class="py-3" th:text="${product.category.name}">Category</td>
-                            <td class="py-3 fw-bold" th:text="'$' + ${product.price}">$0.00</td>
+                            <td class="py-3 fw-bold" th:text="'₹' + ${product.price}">₹0.00</td>
                             <td class="py-3">
                                 <span class="badge rounded-pill px-3 py-2 text-uppercase" style="font-size: 0.65rem; letter-spacing: 1px;"
                                       th:classappend="${product.productStatus.name() == 'ACTIVE'} ? 'bg-success' : 'bg-secondary'"

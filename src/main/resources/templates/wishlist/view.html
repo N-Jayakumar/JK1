@@ -87,13 +87,13 @@
                     <div class="d-flex justify-content-center align-items-baseline gap-2 mb-3 mt-auto">
                         <span th:if="${product.discountPrice != null}"
                               class="text-danger fw-bold fs-5"
-                              th:text="|$${#numbers.formatDecimal(product.discountPrice, 1, 2)}|">$0.00</span>
+                              th:text="|₹${#numbers.formatDecimal(product.discountPrice, 1, 2)}|">₹0.00</span>
                         <span th:if="${product.discountPrice != null}"
                               class="text-muted text-decoration-line-through text-sm"
-                              th:text="|$${#numbers.formatDecimal(product.price, 1, 2)}|">$0.00</span>
+                              th:text="|₹${#numbers.formatDecimal(product.price, 1, 2)}|">₹0.00</span>
                         <span th:if="${product.discountPrice == null}"
                               class="fw-bold text-primary fs-5"
-                              th:text="|$${#numbers.formatDecimal(product.price, 1, 2)}|">$0.00</span>
+                              th:text="|₹${#numbers.formatDecimal(product.price, 1, 2)}|">₹0.00</span>
                     </div>
 
                     <!-- Actions -->

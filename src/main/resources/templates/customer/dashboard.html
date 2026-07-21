@@ -82,7 +82,7 @@
                         <tr th:each="order : ${recentOrders}" class="border-bottom">
                             <td class="py-3 px-4 font-monospace fw-bold" th:text="${order.orderNumber}">#123</td>
                             <td class="py-3 text-muted" th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy')}">Date</td>
-                            <td class="py-3 fw-bold" style="font-family: 'Playfair Display', serif;">$<span th:text="${order.totalAmount}">0.00</span></td>
+                            <td class="py-3 fw-bold" style="font-family: 'Playfair Display', serif;">₹<span th:text="${order.totalAmount}">0.00</span></td>
                             <td class="py-3">
                                 <span class="badge rounded-pill px-3 py-2 text-uppercase" style="font-size: 0.7rem; letter-spacing: 1px;"
                                       th:classappend="${order.orderStatus.name() == 'DELIVERED'} ? 'bg-success' : (${order.orderStatus.name() == 'PENDING'} ? 'bg-warning text-dark' : 'bg-dark')"

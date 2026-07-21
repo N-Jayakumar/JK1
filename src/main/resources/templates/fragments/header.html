@@ -144,7 +144,7 @@
                                     <a class="search-result-item"
                                        :class="{ 'is-active': activeIndex === index }"
                                        :href="'/products/' + item.slug"
-                                       @click.prevent="navigateTo(item.slug)"
+                                       @click.prevent="navigateTo(item.slug, item.id)"
                                        @mouseenter="activeIndex = index">
 
                                         <!-- Thumbnail -->
@@ -307,7 +307,7 @@
                             <a class="search-result-item"
                                :class="{ 'is-active': activeIndex === index }"
                                :href="'/products/' + item.slug"
-                               @click.prevent="navigateTo(item.slug)">
+                               @click.prevent="navigateTo(item.slug, item.id)">
                                 <img :src="item.imageUrl" :alt="item.name" class="search-result-thumb"
                                      loading="lazy"
                                      onerror="this.src='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=100&auto=format&fit=crop'">

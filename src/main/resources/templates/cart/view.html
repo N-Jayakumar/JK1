@@ -95,7 +95,7 @@
                                        th:text="${item.product.name}">Product Name</a>
                                 </h6>
                                 <p class="text-primary fw-bold mb-1 mt-1"
-                                   th:text="'$' + ${item.price}">$0.00</p>
+                                   th:text="'₹' + ${item.price}">₹0.00</p>
                                 <div class="text-sm" style="font-size: 0.85rem;">
                                     <span th:if="${item.product.inventory != null and item.product.inventory.quantity >= item.quantity}" class="text-success">
                                         <i class="bi bi-check-circle me-1"></i> In Stock
@@ -128,7 +128,7 @@
                             <!-- Line Total -->
                             <div class="text-end flex-shrink-0" style="min-width: 80px;">
                                 <span class="fw-bold text-dark"
-                                      th:text="'$' + ${#numbers.formatDecimal(item.price.multiply(new java.math.BigDecimal(item.quantity)), 1, 2)}">$0.00</span>
+                                      th:text="'₹' + ${#numbers.formatDecimal(item.price.multiply(new java.math.BigDecimal(item.quantity)), 1, 2)}">₹0.00</span>
                             </div>
 
                             <!-- Remove -->
@@ -163,11 +163,11 @@
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Subtotal</span>
-                        <span class="fw-medium" th:text="'$' + ${#numbers.formatDecimal(cartSubtotal, 1, 2)}">$0.00</span>
+                        <span class="fw-medium" th:text="'₹' + ${#numbers.formatDecimal(cartSubtotal, 1, 2)}">₹0.00</span>
                     </div>
                     <div th:if="${cartDiscount != null and cartDiscount > 0}" class="d-flex justify-content-between mb-2 text-success">
                         <span>Discount</span>
-                        <span class="fw-medium" th:text="'-$' + ${#numbers.formatDecimal(cartDiscount, 1, 2)}">-$0.00</span>
+                        <span class="fw-medium" th:text="'-₹' + ${#numbers.formatDecimal(cartDiscount, 1, 2)}">-₹0.00</span>
                     </div>
 
                     <hr class="my-3">
@@ -175,7 +175,7 @@
                     <div class="d-flex justify-content-between mb-4">
                         <span class="fw-bold fs-5">Grand Total</span>
                         <span class="fw-bold fs-5 text-primary"
-                              th:text="'$' + ${#numbers.formatDecimal(cart.totalAmount, 1, 2)}">$0.00</span>
+                              th:text="'₹' + ${#numbers.formatDecimal(cart.totalAmount, 1, 2)}">₹0.00</span>
                     </div>
 
                     <a th:href="@{/checkout}" class="btn btn-primary btn-lg w-100 rounded-pill fw-medium shadow-sm">

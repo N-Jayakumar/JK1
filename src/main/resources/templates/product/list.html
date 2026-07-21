@@ -252,13 +252,13 @@
                                 <div class="d-flex align-items-baseline justify-content-center gap-2">
                                     <span th:if="${product.discountPrice != null}"
                                           class="price-discounted fs-5"
-                                          th:text="'$' + ${#numbers.formatDecimal(product.discountPrice, 1, 2)}">$0.00</span>
+                                          th:text="'₹' + ${#numbers.formatDecimal(product.discountPrice, 1, 2)}">₹0.00</span>
                                     <span th:if="${product.discountPrice != null}"
                                           class="price-original"
-                                          th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$0.00</span>
+                                          th:text="'₹' + ${#numbers.formatDecimal(product.price, 1, 2)}">₹0.00</span>
                                     <span th:if="${product.discountPrice == null}"
                                           class="fw-bold text-primary fs-5"
-                                          th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$0.00</span>
+                                          th:text="'₹' + ${#numbers.formatDecimal(product.price, 1, 2)}">₹0.00</span>
                                 </div>
 
                                 <!-- Action Buttons -->

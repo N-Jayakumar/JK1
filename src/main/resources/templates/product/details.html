@@ -100,9 +100,9 @@
                 <!-- With discount -->
                 <div th:if="${product.discountPrice != null}" class="d-flex align-items-baseline gap-2">
                     <span class="price-current"
-                          th:text="'$' + ${#numbers.formatDecimal(product.discountPrice, 1, 2)}">$0.00</span>
+                          th:text="'₹' + ${#numbers.formatDecimal(product.discountPrice, 1, 2)}">₹0.00</span>
                     <span class="price-was"
-                          th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$0.00</span>
+                          th:text="'₹' + ${#numbers.formatDecimal(product.price, 1, 2)}">₹0.00</span>
                     <span class="price-save-badge"
                           th:if="${product.discountPercentage > 0}"
                           th:text="'SAVE ' + ${#numbers.formatDecimal(product.discountPercentage, 0, 0)} + '%'">
@@ -112,7 +112,7 @@
                 <!-- Without discount -->
                 <div th:if="${product.discountPrice == null}">
                     <span class="price-current"
-                          th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$0.00</span>
+                          th:text="'₹' + ${#numbers.formatDecimal(product.price, 1, 2)}">₹0.00</span>
                 </div>
             </div>
 
@@ -212,7 +212,7 @@
             <div class="trust-badges mt-4 pt-4 border-top">
                 <p><i class="bi bi-shield-check text-primary me-2"></i>1 Year JKØ Warranty</p>
                 <p><i class="bi bi-arrow-return-left text-primary me-2"></i>30-Day Hassle-Free Returns</p>
-                <p class="mb-0"><i class="bi bi-truck text-primary me-2"></i>Free Shipping on orders over $100</p>
+                <p class="mb-0"><i class="bi bi-truck text-primary me-2"></i>Free Shipping on orders over ₹100</p>
             </div>
 
         </div><!-- /product info col -->
@@ -292,13 +292,13 @@
                         <div class="d-flex align-items-baseline justify-content-center gap-1">
                             <span th:if="${related.discountPrice != null}"
                                   class="fw-bold text-danger"
-                                  th:text="'$' + ${#numbers.formatDecimal(related.discountPrice, 1, 2)}">$0.00</span>
+                                  th:text="'₹' + ${#numbers.formatDecimal(related.discountPrice, 1, 2)}">₹0.00</span>
                             <span th:if="${related.discountPrice != null}"
                                   class="price-original text-xs"
-                                  th:text="'$' + ${#numbers.formatDecimal(related.price, 1, 2)}">$0.00</span>
+                                  th:text="'₹' + ${#numbers.formatDecimal(related.price, 1, 2)}">₹0.00</span>
                             <span th:if="${related.discountPrice == null}"
                                   class="fw-bold text-primary"
-                                  th:text="'$' + ${#numbers.formatDecimal(related.price, 1, 2)}">$0.00</span>
+                                  th:text="'₹' + ${#numbers.formatDecimal(related.price, 1, 2)}">₹0.00</span>
                         </div>
                     </div>
                 </div>
@@ -324,7 +324,7 @@
                                  loading="lazy">
                         </div>
                         <p class="small fw-medium mb-0 text-truncate" x-text="item.name"></p>
-                        <span class="text-primary fw-bold small" x-text="'$' + item.price"></span>
+                        <span class="text-primary fw-bold small" x-text="'₹' + item.price"></span>
                     </a>
                 </div>
             </template>

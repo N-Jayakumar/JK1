@@ -31,7 +31,7 @@
                             <td class="py-3 text-muted small" th:text="${coupon.couponType}">PERCENTAGE</td>
                             <td class="py-3 fw-semibold">
                                 <span th:if="${coupon.couponType.name() == 'PERCENTAGE'}" th:text="${coupon.discountPercentage + '%'}">20%</span>
-                                <span th:if="${coupon.couponType.name() == 'FIXED_AMOUNT'}" th:text="${'$' + coupon.discountAmount}">$10</span>
+                                <span th:if="${coupon.couponType.name() == 'FIXED_AMOUNT'}" th:text="${'₹' + coupon.discountAmount}">₹10</span>
                                 <span th:if="${coupon.couponType.name() == 'FREE_SHIPPING'}">Free Ship</span>
                             </td>
                             <td class="py-3 text-muted small">

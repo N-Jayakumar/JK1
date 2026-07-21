@@ -7,12 +7,62 @@
             <i class="bi bi-list"></i>
         </button>
         
-        <!-- Global Admin Search Stub -->
-        <div class="input-group d-none d-md-flex" style="width: 300px;">
-            <span class="input-group-text bg-light border-end-0 rounded-start-pill text-muted">
-                <i class="bi bi-search"></i>
-            </span>
-            <input type="text" class="form-control bg-light border-start-0 rounded-end-pill" placeholder="Search orders, products...">
+        <!-- Global Admin Search -->
+        <div x-data="{ ...advancedSearch(), adminMode: true }"
+             class="input-group d-none d-md-flex position-relative" style="width: 300px;"
+             @click.away="_closeDropdown()"
+             role="combobox"
+             aria-haspopup="listbox"
+             :aria-expanded="showDropdown">
+            
+            <form class="w-100 position-relative d-flex" @submit.prevent="submitSearch">
+                <span class="input-group-text bg-light border-end-0 rounded-start-pill text-muted">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="search"
+                       class="form-control bg-light border-start-0 rounded-end-pill shadow-none"
+                       placeholder="Search products..."
+                       autocomplete="off"
+                       spellcheck="false"
+                       x-model="query"
+                       @input="fetchSuggestions"
+                       @keydown="handleKeydown"
+                       @focus="query.trim().length >= 1 && (showDropdown = true)">
+            </form>
+
+            <!-- Dropdown -->
+            <div x-show="showDropdown" x-cloak class="search-dropdown" style="top: 100%; min-width: 300px; z-index: 1050;">
+                <div x-show="loading" class="search-dropdown-loading">
+                    <div class="spinner-border spinner-border-sm text-secondary"></div>
+                    <span class="ms-2">Searching...</span>
+                </div>
+                <div x-show="!loading && results.length === 0 && query.trim().length >= 1" class="search-dropdown-empty p-3 text-muted text-center">
+                    No products found.
+                </div>
+                <ul x-show="!loading && results.length > 0" class="search-results-list list-unstyled mb-0 w-100">
+                    <template x-for="(item, index) in results" :key="item.id">
+                        <li>
+                            <a class="search-result-item d-flex align-items-center gap-3 p-2 text-decoration-none text-dark"
+                               :class="{ 'bg-light': activeIndex === index }"
+                               href="#"
+                               @click.prevent="navigateTo(item.slug, item.id)"
+                               @mouseenter="activeIndex = index">
+                                <img :src="item.imageUrl" :alt="item.name" class="rounded object-fit-cover" style="width: 40px; height: 40px;"
+                                     onerror="this.src='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=100&auto=format&fit=crop'">
+                                <div class="flex-grow-1 overflow-hidden">
+                                    <div class="fw-semibold text-truncate" style="font-size: 0.85rem;" x-text="item.name"></div>
+                                    <div class="text-muted d-flex gap-2" style="font-size: 0.75rem;">
+                                        <span x-text="item.categoryName"></span>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold text-primary" style="font-size: 0.85rem;" x-text="formatPrice(item.price)"></div>
+                                </div>
+                            </a>
+                        </li>
+                    </template>
+                </ul>
+            </div>
         </div>
     </div>
     

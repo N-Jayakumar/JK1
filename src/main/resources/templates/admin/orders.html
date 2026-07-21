@@ -32,7 +32,7 @@
                                       th:classappend="${order.orderStatus.name() == 'DELIVERED' ? 'bg-success' : (order.orderStatus.name() == 'CANCELLED' ? 'bg-danger' : 'bg-warning text-dark')}"
                                       th:text="${order.orderStatus}">STATUS</span>
                             </td>
-                            <td class="py-3 fw-bold" th:text="${'$' + order.totalAmount}">$0.00</td>
+                            <td class="py-3 fw-bold" th:text="${'₹' + order.totalAmount}">₹0.00</td>
                             <td class="py-3 px-4 text-end">
                                 <a th:href="@{/admin/orders/{id}(id=${order.id})}" class="btn btn-sm btn-dark rounded-pill px-3">View</a>
                             </td>

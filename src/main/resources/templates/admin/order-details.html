@@ -65,8 +65,8 @@
                                             </div>
                                         </td>
                                         <td class="py-3 text-center fw-semibold" th:text="${item.quantity}">1</td>
-                                        <td class="py-3 text-end text-muted" th:text="${'$' + item.price}">$0.00</td>
-                                        <td class="py-3 text-end fw-bold" th:text="${'$' + (item.price * item.quantity)}">$0.00</td>
+                                        <td class="py-3 text-end text-muted" th:text="${'₹' + item.price}">₹0.00</td>
+                                        <td class="py-3 text-end fw-bold" th:text="${'₹' + (item.price * item.quantity)}">₹0.00</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -114,16 +114,16 @@
                         
                         <div class="d-flex justify-content-between mb-2 small text-muted">
                             <span>Subtotal</span>
-                            <span th:text="${'$' + order.totalAmount}">$0.00</span>
+                            <span th:text="${'₹' + order.totalAmount}">₹0.00</span>
                         </div>
                         <div class="d-flex justify-content-between mb-3 small text-muted" th:if="${order.coupon != null}">
                             <span>Discount (<span th:text="${order.coupon.code}">CODE</span>)</span>
-                            <span class="text-success">-<span th:text="${'$' + order.coupon.discountAmount}">$0.00</span></span>
+                            <span class="text-success">-<span th:text="${'₹' + order.coupon.discountAmount}">₹0.00</span></span>
                         </div>
                         <hr class="text-muted">
                         <div class="d-flex justify-content-between align-items-center">
                             <span class="fw-bold text-uppercase" style="letter-spacing: 1px;">Total</span>
-                            <span class="fs-4 fw-bold" th:text="${'$' + order.totalAmount}">$0.00</span>
+                            <span class="fs-4 fw-bold" th:text="${'₹' + order.totalAmount}">₹0.00</span>
                         </div>
                     </div>
                 </div>

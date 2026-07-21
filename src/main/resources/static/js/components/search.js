@@ -148,7 +148,7 @@ window.advancedSearch = function() {
                 case 'Enter':
                     event.preventDefault();
                     if (this.activeIndex >= 0 && this.results[this.activeIndex]) {
-                        this.navigateTo(this.results[this.activeIndex].slug);
+                        this.navigateTo(this.results[this.activeIndex].slug, this.results[this.activeIndex].id);
                     } else {
                         this.submitSearch();
                     }
@@ -169,10 +169,14 @@ window.advancedSearch = function() {
          * Navigates to the product detail page for the given slug.
          * Called on click or Enter key selection.
          */
-        navigateTo(slug) {
-            if (!slug) return;
+        navigateTo(slug, id) {
+            if (!slug && !id) return;
             this._closeDropdown();
-            window.location.href = '/products/' + slug;
+            if (this.adminMode && id) {
+                window.location.href = '/admin/products/' + id + '/edit';
+            } else if (slug) {
+                window.location.href = '/products/' + slug;
+            }
         },
 
         /** Submits the search query to the products list page. */
@@ -180,7 +184,11 @@ window.advancedSearch = function() {
             const q = this.query.trim();
             if (q.length > 0) {
                 this._closeDropdown();
-                window.location.href = `/products?search=${encodeURIComponent(q)}`;
+                if (this.adminMode) {
+                    window.location.href = `/admin/products?search=${encodeURIComponent(q)}`;
+                } else {
+                    window.location.href = `/products?search=${encodeURIComponent(q)}`;
+                }
             }
         },
 
@@ -198,7 +206,7 @@ window.advancedSearch = function() {
          */
         formatPrice(price) {
             if (price == null) return '';
-            return '$' + Number(price).toFixed(2);
+            return '₹' + Number(price).toFixed(2);
         },
 
         /**
@@ -223,7 +231,7 @@ window.advancedSearch = function() {
         clear() { this.query = ''; this._closeDropdown(); },
         openDropdown() { this.showDropdown = true; },
         closeDropdown() { this._closeDropdown(); },
-        selectResult(slug) { this.navigateTo(slug); },
+        selectResult(slug, id) { this.navigateTo(slug, id); },
         moveUp(e) { this.handleKeydown({key: 'ArrowUp', preventDefault: () => { if(e) e.preventDefault(); }}); },
         moveDown(e) { this.handleKeydown({key: 'ArrowDown', preventDefault: () => { if(e) e.preventDefault(); }}); },
         submit() { this.submitSearch(); }

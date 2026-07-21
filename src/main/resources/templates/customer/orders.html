@@ -52,7 +52,7 @@
                                       style="letter-spacing: 1px; font-size: 0.7rem;"
                                       th:text="${order.orderStatus}">STATUS</span>
                             </div>
-                            <div class="fw-bold fs-5 mb-3" style="font-family: 'Playfair Display', serif;">$<span th:text="${order.totalAmount}">0.00</span></div>
+                            <div class="fw-bold fs-5 mb-3" style="font-family: 'Playfair Display', serif;">₹<span th:text="${order.totalAmount}">0.00</span></div>
                             <a th:href="@{/account/orders/{id}(id=${order.orderNumber})}" class="btn btn-outline-dark btn-sm rounded-pill w-100 text-uppercase" style="letter-spacing: 1px;">View Details</a>
                         </div>
                     </div>

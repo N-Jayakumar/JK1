@@ -15,7 +15,7 @@
                 <div class="card border-0 shadow-sm rounded-4 h-100 bg-dark text-white">
                     <div class="card-body p-4 d-flex flex-column justify-content-center">
                         <h6 class="text-uppercase text-white-50 fw-semibold mb-2" style="letter-spacing: 1px;">Total Revenue</h6>
-                        <h2 class="fw-bold mb-0" th:text="${'$' + totalRevenue}">$0.00</h2>
+                        <h2 class="fw-bold mb-0" th:text="${'₹' + totalRevenue}">₹0.00</h2>
                     </div>
                 </div>
             </div>
@@ -23,7 +23,7 @@
                 <div class="card border-0 shadow-sm rounded-4 h-100">
                     <div class="card-body p-4 d-flex flex-column justify-content-center">
                         <h6 class="text-uppercase text-muted fw-semibold mb-2" style="letter-spacing: 1px;">Monthly Revenue</h6>
-                        <h2 class="fw-bold mb-0" th:text="${'$' + monthlyRevenue}">$0.00</h2>
+                        <h2 class="fw-bold mb-0" th:text="${'₹' + monthlyRevenue}">₹0.00</h2>
                     </div>
                 </div>
             </div>
@@ -31,7 +31,7 @@
                 <div class="card border-0 shadow-sm rounded-4 h-100">
                     <div class="card-body p-4 d-flex flex-column justify-content-center">
                         <h6 class="text-uppercase text-muted fw-semibold mb-2" style="letter-spacing: 1px;">Today's Revenue</h6>
-                        <h2 class="fw-bold mb-0 text-success" th:text="${'$' + todayRevenue}">$0.00</h2>
+                        <h2 class="fw-bold mb-0 text-success" th:text="${'₹' + todayRevenue}">₹0.00</h2>
                     </div>
                 </div>
             </div>

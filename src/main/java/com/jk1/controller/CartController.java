@@ -84,8 +84,8 @@ public class CartController {
      * Adds a product to the cart.
      */
     @PostMapping("/add")
-    public String addToCart(@RequestParam Long productId,
-                            @RequestParam(defaultValue = "1") int quantity,
+    public String addToCart(@RequestParam("productId") Long productId,
+                            @RequestParam(value = "quantity", defaultValue = "1") int quantity,
                             Principal principal,
                             RedirectAttributes redirectAttributes) {
         if (principal == null) {
@@ -104,8 +104,8 @@ public class CartController {
      * Updates the quantity of an existing cart item.
      */
     @PostMapping("/update/{itemId}")
-    public String updateCartItem(@PathVariable Long itemId,
-                                 @RequestParam int quantity,
+    public String updateCartItem(@PathVariable("itemId") Long itemId,
+                                 @RequestParam("quantity") int quantity,
                                  Principal principal,
                                  RedirectAttributes redirectAttributes) {
         if (principal == null) {
@@ -127,7 +127,7 @@ public class CartController {
      * Removes a single item from the cart.
      */
     @PostMapping("/remove/{itemId}")
-    public String removeCartItem(@PathVariable Long itemId,
+    public String removeCartItem(@PathVariable("itemId") Long itemId,
                                  Principal principal,
                                  RedirectAttributes redirectAttributes) {
         if (principal == null) {
