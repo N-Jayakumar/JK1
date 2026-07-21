@@ -46,20 +46,20 @@
     <!-- Bootstrap 5.3 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
-    
     <!-- AOS Animation JS -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
-    <!-- Custom JS -->
+    <!-- Custom JS & Modules -->
     <script th:src="@{/js/utils/alpine-config.js}"></script>
+    <script defer th:src="@{/js/components/search.js}"></script>
     
-
-    
+    <!-- Page Specific Scripts (Modules and Component Registrations) -->
     <th:block th:if="${scripts != null}" th:replace="${scripts}"></th:block>
+    
+    <!-- Alpine.js (Must load LAST so alpine:init fires after all registrations) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
 </body>
 </html>

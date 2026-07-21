@@ -25,7 +25,7 @@
                 <div class="row align-items-center mb-5 pb-5 border-bottom">
                     <div class="col-md-auto text-center mb-4 mb-md-0">
                         <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 100px; height: 100px; font-size: 2.5rem; font-family: 'Playfair Display', serif;">
-                            <span th:text="${user.firstName.substring(0,1).toUpperCase()} + ${user.lastName.substring(0,1).toUpperCase()}">JD</span>
+                            <span th:text="${(#strings.isEmpty(user.firstName) ? '' : #strings.substring(user.firstName,0,1).toUpperCase()) + (#strings.isEmpty(user.lastName) ? '' : #strings.substring(user.lastName,0,1).toUpperCase())}">JD</span>
                         </div>
                     </div>
                     <div class="col-md text-center text-md-start ps-md-4">

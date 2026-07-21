@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main :: layout(title=${title}, content=~{::content}, styles=~{}, scripts=~{})}" th:fragment="html(title, activeTab, content)">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/main :: layout(title=${title}, content=~{::content}, styles=~{}, scripts=~{::scripts})}" th:fragment="html(title, activeTab, content)">
 <head>
     <title th:text="${title}">Customer Portal | JKØ</title>
 </head>
@@ -29,10 +29,11 @@
                 </div>
             </div>
         </div>
-    
-    <!-- JS Integration -->
-    <script type="module" th:src="@{/js/app.js}"></script>
-    <script type="module" th:src="@{/js/pages/customer/layout.js}"></script>
     </div>
+    
+    <th:block th:fragment="scripts">
+        <script type="module" th:src="@{/js/app.js}"></script>
+        <script type="module" th:src="@{/js/pages/customer/layout.js}"></script>
+    </th:block>
 </body>
 </html>

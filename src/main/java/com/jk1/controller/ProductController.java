@@ -129,7 +129,7 @@ public class ProductController {
             Model model) {
 
         PageRequest pageRequest = PageRequest.of(page, FEATURED_SIZE,
-                Sort.by(Sort.Direction.DESC, "createdAt"));
+                Sort.by(Sort.Direction.DESC, "createdAt").and(Sort.by("id")));
 
         Page<ProductResponseDTO> productPage = productService
                 .findFeaturedProducts(pageRequest)
@@ -325,12 +325,12 @@ public class ProductController {
     private Sort resolveSortOrder(String sort) {
         if (sort == null) return Sort.by(Sort.Direction.DESC, "createdAt");
         return switch (sort) {
-            case "price_asc"  -> Sort.by(Sort.Direction.ASC,  "price");
-            case "price_desc" -> Sort.by(Sort.Direction.DESC, "price");
-            case "rating"     -> Sort.by(Sort.Direction.DESC, "rating");   // Fixed: was "reviews.size"
-            case "name_asc"   -> Sort.by(Sort.Direction.ASC,  "name");
-            case "name_desc"  -> Sort.by(Sort.Direction.DESC, "name");
-            default           -> Sort.by(Sort.Direction.DESC, "createdAt"); // "newest"
+            case "price_asc"  -> Sort.by(Sort.Direction.ASC,  "price").and(Sort.by("id"));
+            case "price_desc" -> Sort.by(Sort.Direction.DESC, "price").and(Sort.by("id"));
+            case "rating"     -> Sort.by(Sort.Direction.DESC, "rating").and(Sort.by("id"));   // Fixed: was "reviews.size"
+            case "name_asc"   -> Sort.by(Sort.Direction.ASC,  "name").and(Sort.by("id"));
+            case "name_desc"  -> Sort.by(Sort.Direction.DESC, "name").and(Sort.by("id"));
+            default           -> Sort.by(Sort.Direction.DESC, "createdAt").and(Sort.by("id")); // "newest"
         };
     }
 

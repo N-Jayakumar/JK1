@@ -124,61 +124,75 @@
             <hr class="text-muted mb-4">
 
             <!-- Quantity + Stock -->
-            <div class="mb-4" x-data="{ qty: 1, maxQty: [[${product.stockQuantity}]] }">
-                <p class="fw-bold font-poppins mb-2">Quantity</p>
-                <div class="d-flex align-items-center gap-4">
-                    <div class="quantity-selector">
-                        <button type="button"
-                                @click="if (qty > 1) qty--"
-                                :disabled="qty <= 1"
-                                id="qty-decrease-btn">
-                            <i class="bi bi-dash"></i>
-                        </button>
-                        <input type="number" x-model="qty"
-                               :min="1" :max="maxQty"
-                               readonly
-                               id="qty-input"
-                               style="pointer-events:none;">
-                        <button type="button"
-                                @click="if (qty < maxQty) qty++"
-                                :disabled="qty >= maxQty"
-                                id="qty-increase-btn">
-                            <i class="bi bi-plus"></i>
-                        </button>
+            <div x-data="{ qty: 1, maxQty: [[${product.stockQuantity}]] }">
+                <div class="mb-4">
+                    <p class="fw-bold font-poppins mb-2">Quantity</p>
+                    <div class="d-flex align-items-center gap-4">
+                        <div class="quantity-selector">
+                            <button type="button"
+                                    @click="if (qty > 1) qty--"
+                                    :disabled="qty <= 1"
+                                    id="qty-decrease-btn">
+                                <i class="bi bi-dash"></i>
+                            </button>
+                            <input type="number" x-model="qty"
+                                   :min="1" :max="maxQty"
+                                   readonly
+                                   id="qty-input"
+                                   style="pointer-events:none;">
+                            <button type="button"
+                                    @click="if (qty < maxQty) qty++"
+                                    :disabled="qty >= maxQty"
+                                    id="qty-increase-btn">
+                                <i class="bi bi-plus"></i>
+                            </button>
+                        </div>
+
+                        <!-- Stock indicator -->
+                        <span th:if="${product.stockQuantity > 10}"
+                              class="text-success fw-medium text-sm">
+                            <i class="bi bi-check-circle me-1"></i>In Stock
+                        </span>
+                        <span th:if="${product.stockQuantity > 0 and product.stockQuantity <= 10}"
+                              class="text-warning fw-medium text-sm">
+                            <i class="bi bi-exclamation-circle me-1"></i>
+                            Only <strong th:text="${product.stockQuantity}"></strong> left!
+                        </span>
+                        <span th:if="${product.stockQuantity == 0}"
+                              class="text-danger fw-medium text-sm">
+                            <i class="bi bi-x-circle me-1"></i>Out of Stock
+                        </span>
                     </div>
-
-                    <!-- Stock indicator -->
-                    <span th:if="${product.stockQuantity > 10}"
-                          class="text-success fw-medium text-sm">
-                        <i class="bi bi-check-circle me-1"></i>In Stock
-                    </span>
-                    <span th:if="${product.stockQuantity > 0 and product.stockQuantity <= 10}"
-                          class="text-warning fw-medium text-sm">
-                        <i class="bi bi-exclamation-circle me-1"></i>
-                        Only <strong th:text="${product.stockQuantity}"></strong> left!
-                    </span>
-                    <span th:if="${product.stockQuantity == 0}"
-                          class="text-danger fw-medium text-sm">
-                        <i class="bi bi-x-circle me-1"></i>Out of Stock
-                    </span>
                 </div>
-            </div>
 
-            <!-- ── Add to Cart + Wishlist CTAs ─────────────────────────────── -->
-            <div class="d-flex gap-3 mt-4 flex-wrap">
+                <!-- ── Add to Cart + Wishlist CTAs ─────────────────────────────── -->
+                <div class="d-flex gap-3 mt-4 flex-wrap">
 
-                <!-- Add to Cart form (POST /cart/add) -->
-                <form th:action="@{/cart/add}" method="POST" class="flex-grow-1 d-flex gap-3">
-                    <input type="hidden" name="productId" th:value="${product.id}" id="cart-product-id">
-                    <input type="hidden" name="quantity" value="1" id="cart-quantity-hidden">
+                    <!-- Add to Cart form (POST /cart/add) -->
+                    <form th:action="@{/cart/add}" method="POST" class="flex-grow-1 d-flex gap-3">
+                        <input type="hidden" name="productId" th:value="${product.id}" id="cart-product-id">
+                        <input type="hidden" name="quantity" :value="qty" id="cart-quantity-hidden">
 
                     <button type="submit"
                             id="add-to-cart-btn"
-                            class="btn btn-primary btn-lg rounded-pill px-5 fw-medium shadow flex-grow-1"
+                            class="btn btn-outline-dark btn-lg rounded-pill px-4 fw-medium shadow-sm flex-grow-1"
                             th:disabled="${product.stockQuantity <= 0}">
                         <i class="bi bi-cart-plus me-2"></i>
                         <span th:text="${product.stockQuantity > 0 ? 'Add to Cart' : 'Out of Stock'}">Add to Cart</span>
                     </button>
+                    <a th:href="@{/checkout}"
+                       class="btn btn-primary btn-lg rounded-pill px-4 fw-medium shadow flex-grow-1"
+                       th:classappend="${product.stockQuantity <= 0 ? 'disabled' : ''}"
+                       onclick="event.preventDefault(); document.getElementById('buy-now-form').submit();">
+                        <i class="bi bi-lightning-charge me-2"></i> Buy Now
+                    </a>
+                </form>
+
+                <!-- Hidden form for Buy Now bypass -->
+                <form th:action="@{/cart/add}" method="POST" id="buy-now-form" class="d-none">
+                    <input type="hidden" name="productId" th:value="${product.id}">
+                    <input type="hidden" name="quantity" :value="qty">
+                    <input type="hidden" name="checkout" value="true"> <!-- Assuming backend supports redirect logic based on checkout param -->
                 </form>
 
                 <!-- Add to Wishlist form (POST /wishlist/add/{id}) -->
@@ -192,6 +206,7 @@
                     </button>
                 </form>
             </div>
+            </div> <!-- /x-data qty scope -->
 
             <!-- Trust Badges -->
             <div class="trust-badges mt-4 pt-4 border-top">

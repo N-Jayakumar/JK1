@@ -144,7 +144,7 @@ public class ProductServiceImpl implements ProductService {
         Pageable sortedPageable = PageRequest.of(
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
-                Sort.by(Sort.Direction.DESC, "createdAt")
+                Sort.by(Sort.Direction.DESC, "createdAt").and(Sort.by("id"))
         );
         return productRepository.findByProductStatus(ProductStatus.ACTIVE, sortedPageable);
     }

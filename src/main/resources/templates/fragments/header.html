@@ -60,7 +60,7 @@
                     Uses @keydown for ↑ ↓ Enter Escape navigation
                     Uses @click.away to close dropdown
                 -->
-                <div x-data="advancedSearch"
+                <div x-data="advancedSearch()"
                      class="search-wrapper mx-auto"
                      style="max-width: 400px;"
                      @click.away="_closeDropdown()"
@@ -274,7 +274,7 @@
          id="mobile-menu">
 
         <!-- Mobile search -->
-        <div x-data="advancedSearch"
+        <div x-data="advancedSearch()"
              class="search-wrapper mb-3 w-100 position-relative"
              @click.away="_closeDropdown()">
             <form @submit.prevent="submitSearch">

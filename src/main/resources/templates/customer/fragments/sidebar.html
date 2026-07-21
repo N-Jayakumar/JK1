@@ -6,10 +6,10 @@
             <div class="card-body p-4 p-xl-5">
                 <div class="d-flex align-items-center mb-5">
                     <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px; font-size: 1.2rem; font-family: 'Playfair Display', serif;">
-                        <span th:text="${#authentication.principal.username.substring(0,1).toUpperCase()}">J</span>
+                        <span th:text="${#strings.isEmpty(#authentication.name) ? 'U' : #strings.substring(#authentication.name,0,1).toUpperCase()}">J</span>
                     </div>
                     <div>
-                        <h6 class="fw-bold mb-0 text-uppercase" style="letter-spacing: 1px;" th:text="${#authentication.principal.username.split('@')[0]}">User</h6>
+                        <h6 class="fw-bold mb-0 text-uppercase" style="letter-spacing: 1px;" th:text="${#strings.arraySplit(#authentication.name, '@')[0]}">User</h6>
                         <small class="text-muted">Premium Member</small>
                     </div>
                 </div>

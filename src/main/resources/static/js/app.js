@@ -5,7 +5,6 @@
  */
 "use strict";
 
-import './components/search.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("JKØ App Initialized");

@@ -87,12 +87,12 @@
                         <div>
                             <h6 class="fw-bold text-uppercase mb-3 text-muted" style="letter-spacing: 1px; font-size: 0.8rem;">Payment Method</h6>
                             <div class="d-flex align-items-center">
-                                <i class="bi bi-credit-card me-2 fs-5" th:if="${order.payment.paymentMethod.name() != 'CASH_ON_DELIVERY'}"></i>
-                                <i class="bi bi-cash me-2 fs-5" th:if="${order.payment.paymentMethod.name() == 'CASH_ON_DELIVERY'}"></i>
-                                <span class="small fw-semibold" th:text="${order.payment.paymentMethod}">CASH_ON_DELIVERY</span>
+                                <i class="bi bi-credit-card me-2 fs-5" th:if="${order.payment != null && order.payment.paymentMethod.name() != 'CASH_ON_DELIVERY'}"></i>
+                                <i class="bi bi-cash me-2 fs-5" th:if="${order.payment != null && order.payment.paymentMethod.name() == 'CASH_ON_DELIVERY'}"></i>
+                                <span class="small fw-semibold" th:text="${order.payment != null ? order.payment.paymentMethod : 'PENDING'}">CASH_ON_DELIVERY</span>
                             </div>
                             <div class="mt-2">
-                                <span class="badge" th:classappend="${order.payment.paymentStatus.name() == 'COMPLETED'} ? 'bg-success' : 'bg-warning text-dark'" th:text="${order.payment.paymentStatus}">PENDING</span>
+                                <span class="badge" th:classappend="${order.payment != null && order.payment.paymentStatus.name() == 'COMPLETED'} ? 'bg-success' : 'bg-warning text-dark'" th:text="${order.payment != null ? order.payment.paymentStatus : 'PENDING'}">PENDING</span>
                             </div>
                         </div>
                     </div>

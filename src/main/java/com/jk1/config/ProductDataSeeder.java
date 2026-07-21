@@ -147,14 +147,14 @@ public class ProductDataSeeder implements CommandLineRunner {
 
     private String getImageForCategory(String categoryName) {
         return switch (categoryName) {
-            case "Formal Shirts" -> "https://images.unsplash.com/photo-1602810318383-e386cc2a3ceb?q=80&w=800&auto=format&fit=crop";
-            case "Formal Pants" -> "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=800&auto=format&fit=crop";
-            case "Formal Shoes" -> "https://images.unsplash.com/photo-1614252339475-531eba835eb1?q=80&w=800&auto=format&fit=crop";
-            case "Leather Belts" -> "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=800&auto=format&fit=crop";
-            case "Watches" -> "https://images.unsplash.com/photo-1524592094714-0f0654e20314?q=80&w=800&auto=format&fit=crop";
-            case "Bracelets" -> "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=800&auto=format&fit=crop";
-            case "Perfumes" -> "https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=800&auto=format&fit=crop";
-            default -> "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop";
+            case "Formal Shirts" -> "/images/products/shirts/shirt-001.jpg";
+            case "Formal Pants" -> "/images/products/trousers/trouser-001.jpg";
+            case "Formal Shoes" -> "/images/products/shoes/shoe-001.jpg";
+            case "Leather Belts" -> "/images/products/belts/belt-001.jpg";
+            case "Watches" -> "/images/products/watches/watch-001.jpg";
+            case "Bracelets" -> "/images/products/bracelets/bracelet-001.jpg";
+            case "Perfumes" -> "/images/products/perfumes/perfume-001.jpg";
+            default -> "/images/placeholders/no-image.png";
         };
     }
 }

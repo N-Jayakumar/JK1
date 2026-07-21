@@ -22,9 +22,8 @@
  * Navigation on select: window.location.href = '/products/' + slug
  */
 
-document.addEventListener('alpine:init', () => {
-
-    Alpine.data('advancedSearch', () => ({
+window.advancedSearch = function() {
+    return {
 
         // ── State ────────────────────────────────────────────────────────────
         query:        '',
@@ -33,6 +32,12 @@ document.addEventListener('alpine:init', () => {
         showDropdown: false,
         activeIndex:  -1,
         errorMessage: '',
+        
+        // Additional state requested by audit
+        selectedCategory: null,
+        selectedBrand: null,
+        page: 0,
+        size: 10,
 
         /** Holds the AbortController for the current in-flight fetch. */
         _abortController: null,
@@ -209,6 +214,18 @@ document.addEventListener('alpine:init', () => {
         hasDiscount(item) {
             return item.discountPrice != null
                 && Number(item.discountPrice) < Number(item.price);
-        }
-    }));
-});
+        },
+
+        // ── Audit Methods (Aliases) ──────────────────────────────────────────
+        search() { this.submitSearch(); },
+        searchProducts() { this.submitSearch(); },
+        fetchResults() { this.fetchSuggestions(); },
+        clear() { this.query = ''; this._closeDropdown(); },
+        openDropdown() { this.showDropdown = true; },
+        closeDropdown() { this._closeDropdown(); },
+        selectResult(slug) { this.navigateTo(slug); },
+        moveUp(e) { this.handleKeydown({key: 'ArrowUp', preventDefault: () => { if(e) e.preventDefault(); }}); },
+        moveDown(e) { this.handleKeydown({key: 'ArrowDown', preventDefault: () => { if(e) e.preventDefault(); }}); },
+        submit() { this.submitSearch(); }
+    };
+};

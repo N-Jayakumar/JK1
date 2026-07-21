@@ -135,7 +135,7 @@ public class SearchApiController {
         }
 
         PageRequest pageRequest = PageRequest.of(0, FULL_SEARCH_LIMIT,
-                Sort.by(Sort.Direction.DESC, "createdAt"));
+                Sort.by(Sort.Direction.DESC, "createdAt").and(Sort.by("id")));
 
         List<ProductResponseDTO> results = productService
                 .findAll(ProductSpecification.searchAndFilter(query, null, null, null, null), pageRequest)
