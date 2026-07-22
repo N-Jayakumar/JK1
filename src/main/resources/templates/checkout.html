@@ -101,27 +101,23 @@
                             <div class="mb-4" style="max-height: 300px; overflow-y: auto;">
                                 <div class="d-flex align-items-center mb-3" th:each="item : ${cart.items}">
                                     <div class="flex-shrink-0 bg-white rounded-3 overflow-hidden me-3" style="width: 60px; height: 60px;">
-                                        <img th:if="${!item.product.images.isEmpty()}" th:src="${item.product.images[0].imageUrl}" class="w-100 h-100 object-fit-cover" alt="Product Image">
-                                        <div th:if="${item.product.images.isEmpty()}" class="w-100 h-100 d-flex align-items-center justify-content-center bg-light text-muted">
-                                            <i class="bi bi-image"></i>
-                                        </div>
+                                        <img th:src="${item.product.imageUrl}" class="w-100 h-100 object-fit-cover" alt="Product Image">
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="mb-0 fw-bold" style="font-size: 0.9rem;" th:text="${item.product.name}">Product Name</h6>
                                         <small class="text-muted">Qty: <span th:text="${item.quantity}">1</span></small>
                                     </div>
                                     <div class="fw-bold" style="font-size: 0.95rem;">
-                                        $<span th:text="${item.price * item.quantity}">0.00</span>
+                                        ₹<span th:text="${item.price != null ? #numbers.formatDecimal(item.price.multiply(new java.math.BigDecimal(item.quantity)), 1, 2) : '0.00'}">0.00</span>
                                     </div>
                                 </div>
                             </div>
                             
                             <hr class="border-secondary opacity-10">
                             
-                            <!-- Totals -->
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Subtotal</span>
-                                <span class="fw-bold">₹<span th:text="${cart.totalAmount}">0.00</span></span>
+                                <span class="fw-bold">₹<span th:text="${cart.totalAmount != null ? #numbers.formatDecimal(cart.totalAmount, 1, 2) : '0.00'}">0.00</span></span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Shipping</span>
@@ -136,7 +132,7 @@
                             
                             <div class="d-flex justify-content-between align-items-center mb-5">
                                 <span class="fw-bold text-uppercase" style="letter-spacing: 1px;">Total</span>
-                                <span class="fs-4 fw-bold" style="font-family: 'Playfair Display', serif;">₹<span th:text="${cart.totalAmount}">0.00</span></span>
+                                <span class="fs-4 fw-bold" style="font-family: 'Playfair Display', serif;">₹<span th:text="${cart.totalAmount != null ? #numbers.formatDecimal(cart.totalAmount, 1, 2) : '0.00'}">0.00</span></span>
                             </div>
                             
                             <button type="submit" form="checkoutForm" class="btn btn-dark w-100 rounded-pill py-3 text-uppercase fw-semibold" style="letter-spacing: 1.5px;" th:disabled="${addresses == null || addresses.isEmpty()}">

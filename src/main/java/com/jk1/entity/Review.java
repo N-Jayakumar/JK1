@@ -7,6 +7,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "reviews")
 @Getter
@@ -37,4 +40,16 @@ public class Review extends BaseAuditEntity {
     @Column(name = "review_status", nullable = false, length = 50)
     @Builder.Default
     private ReviewStatus reviewStatus = ReviewStatus.PENDING;
+
+    @Column(name = "is_verified_purchase", nullable = false)
+    @Builder.Default
+    private boolean isVerifiedPurchase = false;
+
+    @Column(name = "helpful_votes", nullable = false)
+    @Builder.Default
+    private int helpfulVotes = 0;
+
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ReviewImage> images = new ArrayList<>();
 }

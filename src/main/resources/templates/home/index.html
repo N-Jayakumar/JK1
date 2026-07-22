@@ -16,11 +16,11 @@
                 <div class="row">
                     <div class="col-lg-7">
                         <div x-show="loaded" x-transition:enter="transition ease-out duration-1000" x-transition:enter-start="opacity-0 translate-y-12" x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
-                            <span class="badge bg-primary px-3 py-2 rounded-pill mb-4 text-uppercase tracking-wide">New Collection 2026</span>
+                            <span class="badge px-3 py-2 rounded-pill mb-4 text-uppercase tracking-wide" style="background-color: #D4AF37; color: #1a1a1a;">New Collection 2026</span>
                             <h1 class="display-2 fw-bold font-poppins mb-4 lh-sm">Redefine Your<br>Premium Style</h1>
                             <p class="lead mb-5 opacity-75 fw-light" style="max-width: 500px;">Discover the latest trends and exclusive collections tailored for modern elegance and unparalleled comfort.</p>
                             <div class="d-flex gap-3">
-                                <a th:href="@{/products}" class="btn btn-primary btn-lg rounded-pill px-5 fw-medium shadow-sm">Shop Now</a>
+                                <a th:href="@{/products}" class="btn btn-lg rounded-pill px-5 fw-medium shadow-sm text-dark" style="background-color: #D4AF37;">Shop Now</a>
                                 <a th:href="@{/products}" class="btn btn-outline-light btn-lg rounded-pill px-5 fw-medium">Explore</a>
                             </div>
                         </div>
@@ -69,32 +69,61 @@
                 </div>
                 
                 <div class="row g-4">
-                    <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="0">
-                        <div class="category-card shadow-sm">
-                            <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=600&auto=format&fit=crop" alt="Men">
+                    <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="0">
+                        <a th:href="@{/categories/shirts}" class="category-card shadow-sm d-block text-decoration-none">
+                            <img src="https://images.unsplash.com/photo-1596755094514-f87e32f85e23?q=80&w=400&auto=format&fit=crop" alt="Shirts">
                             <div class="category-overlay">
-                                <h3 class="fw-bold font-poppins mb-0">Men's Collection</h3>
-                                <p class="text-white-50 mb-0">240 Products</p>
+                                <h4 class="fw-bold font-poppins mb-0">Shirts</h4>
                             </div>
-                        </div>
+                        </a>
                     </div>
-                    <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="100">
-                        <div class="category-card shadow-sm">
-                            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=600&auto=format&fit=crop" alt="Women">
+                    <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="50">
+                        <a th:href="@{/categories/pants}" class="category-card shadow-sm d-block text-decoration-none">
+                            <img src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=400&auto=format&fit=crop" alt="Pants">
                             <div class="category-overlay">
-                                <h3 class="fw-bold font-poppins mb-0">Women's Collection</h3>
-                                <p class="text-white-50 mb-0">350 Products</p>
+                                <h4 class="fw-bold font-poppins mb-0">Pants</h4>
                             </div>
-                        </div>
+                        </a>
                     </div>
-                    <div class="col-lg-4 col-md-12" data-aos="zoom-in" data-aos-delay="200">
-                        <div class="category-card shadow-sm">
-                            <img src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=600&auto=format&fit=crop" alt="Accessories">
+                    <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="100">
+                        <a th:href="@{/categories/blazers}" class="category-card shadow-sm d-block text-decoration-none">
+                            <img src="https://images.unsplash.com/photo-1594938298596-10fe6eb16462?q=80&w=400&auto=format&fit=crop" alt="Blazers">
                             <div class="category-overlay">
-                                <h3 class="fw-bold font-poppins mb-0">Luxury Accessories</h3>
-                                <p class="text-white-50 mb-0">120 Products</p>
+                                <h4 class="fw-bold font-poppins mb-0">Blazers</h4>
                             </div>
-                        </div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="150">
+                        <a th:href="@{/categories/shoes}" class="category-card shadow-sm d-block text-decoration-none">
+                            <img src="https://images.unsplash.com/photo-1449505278894-297fdb3edbc1?q=80&w=400&auto=format&fit=crop" alt="Shoes">
+                            <div class="category-overlay">
+                                <h4 class="fw-bold font-poppins mb-0">Shoes</h4>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="200">
+                        <a th:href="@{/categories/watches}" class="category-card shadow-sm d-block text-decoration-none">
+                            <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=400&auto=format&fit=crop" alt="Watches">
+                            <div class="category-overlay">
+                                <h4 class="fw-bold font-poppins mb-0">Watches</h4>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="250">
+                        <a th:href="@{/categories/belts}" class="category-card shadow-sm d-block text-decoration-none">
+                            <img src="https://images.unsplash.com/photo-1624222247344-550fb60583dc?q=80&w=400&auto=format&fit=crop" alt="Belts">
+                            <div class="category-overlay">
+                                <h4 class="fw-bold font-poppins mb-0">Belts</h4>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="300">
+                        <a th:href="@{/categories/perfumes}" class="category-card shadow-sm d-block text-decoration-none">
+                            <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=400&auto=format&fit=crop" alt="Perfumes">
+                            <div class="category-overlay">
+                                <h4 class="fw-bold font-poppins mb-0">Perfumes</h4>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -118,13 +147,30 @@
                                 <a th:href="@{/products/{slug}(slug=${product.slug})}">
                                     <img th:src="${product.imageUrl != null ? product.imageUrl : 'https://placehold.co/600x800/2a2a2a/ffffff?text=' + product.name}" class="img-fluid" th:alt="${product.name}">
                                 </a>
-                                <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-3 px-2 py-1">Featured</span>
+                                <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-3 px-2 py-1 shadow-sm">Featured</span>
+                                <form th:action="@{/wishlist/add/{id}(id=${product.id})}" method="post" class="position-absolute top-0 end-0 m-3 z-2">
+                                    <button type="submit" class="btn btn-light rounded-circle shadow-sm p-2 d-flex align-items-center justify-content-center product-action-btn" style="width:36px; height:36px;" title="Add to Wishlist">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </button>
+                                </form>
+                                <div class="product-actions-overlay position-absolute bottom-0 start-0 w-100 p-3 d-flex gap-2">
+                                    <form th:action="@{/cart/add}" method="post" class="flex-grow-1">
+                                        <input type="hidden" name="productId" th:value="${product.id}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn btn-dark w-100 fw-medium text-uppercase text-xs"><i class="fa-solid fa-cart-shopping me-1"></i> Add</button>
+                                    </form>
+                                    <a th:href="@{/checkout(productId=${product.id})}" class="btn flex-grow-1 fw-medium text-uppercase text-xs text-dark" style="background-color: #D4AF37;">Buy</a>
+                                </div>
                             </div>
-                            <div class="p-4 text-center">
+                            <div class="p-4 text-center bg-white position-relative z-3">
                                 <h5 class="fw-bold font-poppins text-dark mb-1 text-truncate" th:text="${product.name}">Product Name</h5>
-                                <p class="text-muted text-sm mb-3" th:text="${product.categoryName}">Category</p>
+                                <div class="text-warning mb-2 text-xs">
+                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                </div>
                                 <div class="d-flex justify-content-center gap-2 align-items-center">
-                                    <h5 class="fw-bold text-primary mb-0" th:text="${'₹' + product.price}">₹0.00</h5>
+                                    <span class="fw-bold text-danger mb-0" th:if="${product.discountPrice != null}" th:text="${'₹' + product.discountPrice}">₹0.00</span>
+                                    <span class="text-muted text-decoration-line-through text-xs" th:if="${product.discountPrice != null}" th:text="${'₹' + product.price}">₹0.00</span>
+                                    <span class="fw-bold text-dark mb-0" th:if="${product.discountPrice == null}" th:text="${'₹' + product.price}">₹0.00</span>
                                 </div>
                             </div>
                         </div>
@@ -145,18 +191,35 @@
                 </div>
                 <div class="row g-4">
                     <div class="col-lg-3 col-md-6" th:each="product : ${bestSellers}" data-aos="fade-up">
-                        <div class="product-card h-100 shadow-sm bg-light">
+                        <div class="product-card h-100 shadow-sm bg-white">
                             <div class="product-image-container position-relative">
                                 <a th:href="@{/products/{slug}(slug=${product.slug})}">
                                     <img th:src="${product.imageUrl != null ? product.imageUrl : 'https://placehold.co/600x800/2a2a2a/ffffff?text=' + product.name}" class="img-fluid" th:alt="${product.name}">
                                 </a>
-                                <span class="badge bg-danger position-absolute top-0 start-0 m-3 px-2 py-1">Hot</span>
+                                <span class="badge bg-danger position-absolute top-0 start-0 m-3 px-2 py-1 shadow-sm">Hot</span>
+                                <form th:action="@{/wishlist/add/{id}(id=${product.id})}" method="post" class="position-absolute top-0 end-0 m-3 z-2">
+                                    <button type="submit" class="btn btn-light rounded-circle shadow-sm p-2 d-flex align-items-center justify-content-center product-action-btn" style="width:36px; height:36px;" title="Add to Wishlist">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </button>
+                                </form>
+                                <div class="product-actions-overlay position-absolute bottom-0 start-0 w-100 p-3 d-flex gap-2">
+                                    <form th:action="@{/cart/add}" method="post" class="flex-grow-1">
+                                        <input type="hidden" name="productId" th:value="${product.id}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn btn-dark w-100 fw-medium text-uppercase text-xs"><i class="fa-solid fa-cart-shopping me-1"></i> Add</button>
+                                    </form>
+                                    <a th:href="@{/checkout(productId=${product.id})}" class="btn flex-grow-1 fw-medium text-uppercase text-xs text-dark" style="background-color: #D4AF37;">Buy</a>
+                                </div>
                             </div>
-                            <div class="p-4 text-center">
+                            <div class="p-4 text-center bg-white position-relative z-3">
                                 <h5 class="fw-bold font-poppins text-dark mb-1 text-truncate" th:text="${product.name}">Product Name</h5>
-                                <p class="text-muted text-sm mb-3" th:text="${product.categoryName}">Category</p>
+                                <div class="text-warning mb-2 text-xs">
+                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                </div>
                                 <div class="d-flex justify-content-center gap-2 align-items-center">
-                                    <h5 class="fw-bold text-primary mb-0" th:text="${'₹' + product.price}">₹0.00</h5>
+                                    <span class="fw-bold text-danger mb-0" th:if="${product.discountPrice != null}" th:text="${'₹' + product.discountPrice}">₹0.00</span>
+                                    <span class="text-muted text-decoration-line-through text-xs" th:if="${product.discountPrice != null}" th:text="${'₹' + product.price}">₹0.00</span>
+                                    <span class="fw-bold text-dark mb-0" th:if="${product.discountPrice == null}" th:text="${'₹' + product.price}">₹0.00</span>
                                 </div>
                             </div>
                         </div>
@@ -179,13 +242,30 @@
                                 <a th:href="@{/products/{slug}(slug=${product.slug})}">
                                     <img th:src="${product.imageUrl != null ? product.imageUrl : 'https://placehold.co/600x800/2a2a2a/ffffff?text=' + product.name}" class="img-fluid" th:alt="${product.name}">
                                 </a>
-                                <span class="badge bg-dark position-absolute top-0 start-0 m-3 px-2 py-1">NEW</span>
+                                <span class="badge bg-dark position-absolute top-0 start-0 m-3 px-2 py-1 shadow-sm">NEW</span>
+                                <form th:action="@{/wishlist/add/{id}(id=${product.id})}" method="post" class="position-absolute top-0 end-0 m-3 z-2">
+                                    <button type="submit" class="btn btn-light rounded-circle shadow-sm p-2 d-flex align-items-center justify-content-center product-action-btn" style="width:36px; height:36px;" title="Add to Wishlist">
+                                        <i class="fa-regular fa-heart"></i>
+                                    </button>
+                                </form>
+                                <div class="product-actions-overlay position-absolute bottom-0 start-0 w-100 p-3 d-flex gap-2">
+                                    <form th:action="@{/cart/add}" method="post" class="flex-grow-1">
+                                        <input type="hidden" name="productId" th:value="${product.id}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn btn-dark w-100 fw-medium text-uppercase text-xs"><i class="fa-solid fa-cart-shopping me-1"></i> Add</button>
+                                    </form>
+                                    <a th:href="@{/checkout(productId=${product.id})}" class="btn flex-grow-1 fw-medium text-uppercase text-xs text-dark" style="background-color: #D4AF37;">Buy</a>
+                                </div>
                             </div>
-                            <div class="p-4 text-center">
+                            <div class="p-4 text-center bg-white position-relative z-3">
                                 <h5 class="fw-bold font-poppins text-dark mb-1 text-truncate" th:text="${product.name}">Product Name</h5>
-                                <p class="text-muted text-sm mb-3" th:text="${product.categoryName}">Category</p>
+                                <div class="text-warning mb-2 text-xs">
+                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                </div>
                                 <div class="d-flex justify-content-center gap-2 align-items-center">
-                                    <h5 class="fw-bold text-primary mb-0" th:text="${'₹' + product.price}">₹0.00</h5>
+                                    <span class="fw-bold text-danger mb-0" th:if="${product.discountPrice != null}" th:text="${'₹' + product.discountPrice}">₹0.00</span>
+                                    <span class="text-muted text-decoration-line-through text-xs" th:if="${product.discountPrice != null}" th:text="${'₹' + product.price}">₹0.00</span>
+                                    <span class="fw-bold text-dark mb-0" th:if="${product.discountPrice == null}" th:text="${'₹' + product.price}">₹0.00</span>
                                 </div>
                             </div>
                         </div>

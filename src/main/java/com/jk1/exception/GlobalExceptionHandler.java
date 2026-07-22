@@ -12,6 +12,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
@@ -135,6 +137,29 @@ public class GlobalExceptionHandler {
                 "Something Went Wrong",
                 "A data loading error occurred. Please refresh or go back.",
                 "error/500");
+    }
+
+    /**
+     * Handles missing static resources (like images) and undefined endpoints.
+     * Prevents these from falling through to the generic 500 error handler.
+     */
+    @ExceptionHandler({NoResourceFoundException.class, NoHandlerFoundException.class})
+    public Object handleNotFoundException(Exception ex, HttpServletRequest request) {
+        log.warn("[404] {} — path: {}", ex.getMessage(), request.getRequestURI());
+
+        // Fallback for missing images
+        if (request.getRequestURI().startsWith("/images/")) {
+            return new ModelAndView("redirect:https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=600&auto=format&fit=crop");
+        }
+
+        if (wantsJson(request)) {
+            return buildJsonResponse(HttpStatus.NOT_FOUND, "Resource not found", request);
+        }
+
+        return buildMvcError(HttpStatus.NOT_FOUND,
+                "Page Not Found",
+                "The requested resource was not found.",
+                "error/404");
     }
 
     /**

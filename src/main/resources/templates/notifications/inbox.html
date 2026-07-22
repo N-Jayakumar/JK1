@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{layouts/main :: layout(title='My Notifications - JK1', content=~{::section}, styles=~{}, scripts=~{::script})}">
+<section class="container py-5">
+    <div class="row mb-4 align-items-center">
+        <div class="col">
+            <h2 class="fw-bold font-poppins mb-0">Message Center</h2>
+            <p class="text-muted mb-0">You have <span th:text="${unreadCount}" class="fw-bold text-primary">0</span> unread notifications.</p>
+        </div>
+        <div class="col-auto">
+            <button th:if="${unreadCount > 0}" id="mark-all-read-btn" class="btn btn-outline-primary btn-sm rounded-pill">
+                <i class="bi bi-check2-all me-1"></i> Mark all as read
+            </button>
+            <a th:href="@{/user/settings}" class="btn btn-outline-secondary btn-sm rounded-pill ms-2">
+                <i class="bi bi-gear me-1"></i> Settings
+            </a>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="list-group list-group-flush" id="notification-list">
+            <div th:if="${#lists.isEmpty(notifications)}" class="p-5 text-center text-muted">
+                <i class="bi bi-bell-slash fs-1 d-block mb-3"></i>
+                <h5>No notifications yet</h5>
+                <p>When you get notifications, they'll show up here.</p>
+            </div>
+            
+            <div th:each="notif : ${notifications}" 
+                 th:id="'notif-' + ${notif.id}"
+                 class="list-group-item list-group-item-action p-4 border-bottom position-relative"
+                 th:classappend="${!notif.read} ? 'bg-light' : ''">
+                
+                <div class="d-flex w-100 justify-content-between align-items-start">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" 
+                             style="width: 48px; height: 48px;"
+                             th:classappend="${
+                                notif.notificationType.name() == 'NEW_ORDER' or notif.notificationType.name() == 'ORDER_CONFIRMED' ? 'bg-primary-subtle text-primary' :
+                                notif.notificationType.name() == 'DELIVERED' ? 'bg-success-subtle text-success' :
+                                notif.notificationType.name() == 'CANCELLED' ? 'bg-danger-subtle text-danger' :
+                                notif.notificationType.name() == 'NEW_OFFERS' ? 'bg-warning-subtle text-warning' : 'bg-secondary-subtle text-secondary'}">
+                            
+                            <i class="bi fs-5"
+                               th:classappend="${
+                                  notif.notificationType.name() == 'NEW_ORDER' or notif.notificationType.name() == 'ORDER_CONFIRMED' ? 'bi-box-seam' :
+                                  notif.notificationType.name() == 'DELIVERED' ? 'bi-check-circle' :
+                                  notif.notificationType.name() == 'CANCELLED' ? 'bi-x-circle' :
+                                  notif.notificationType.name() == 'NEW_OFFERS' ? 'bi-star' : 'bi-info-circle'}"></i>
+                        </div>
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <h6 class="mb-0 fw-bold" th:text="${notif.title}">Notification Title</h6>
+                                <span th:if="${!notif.read}" class="badge bg-primary rounded-pill" style="font-size: 0.6rem;">New</span>
+                            </div>
+                            <p class="mb-1 text-secondary" th:text="${notif.message}">Notification message content here.</p>
+                            <small class="text-muted" th:text="${#temporals.format(notif.createdAt, 'MMM dd, yyyy HH:mm')}">Date</small>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column align-items-end gap-2 ms-3">
+                        <button class="btn btn-sm btn-light text-danger delete-notif-btn" th:data-id="${notif.id}" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        <button th:if="${!notif.read}" class="btn btn-sm btn-link text-decoration-none mark-read-btn p-0" th:data-id="${notif.id}">
+                            Mark as read
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        if(csrfToken && csrfHeader) {
+            headers[csrfHeader] = csrfToken;
+        }
+
+        // Mark single as read
+        document.querySelectorAll('.mark-read-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = btn.getAttribute('data-id');
+                try {
+                    await fetch(`/user/notifications/${id}/read`, { method: 'POST', headers });
+                    const item = document.getElementById(`notif-${id}`);
+                    item.classList.remove('bg-light');
+                    const badge = item.querySelector('.badge.bg-primary');
+                    if (badge) badge.remove();
+                    btn.remove();
+                    updateBadgeCount();
+                } catch (err) {
+                    console.error(err);
+                }
+            });
+        });
+
+        // Delete
+        document.querySelectorAll('.delete-notif-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = btn.getAttribute('data-id');
+                try {
+                    await fetch(`/user/notifications/${id}`, { method: 'DELETE', headers });
+                    document.getElementById(`notif-${id}`).remove();
+                    updateBadgeCount();
+                } catch (err) {
+                    console.error(err);
+                }
+            });
+        });
+
+        // Mark all as read
+        const markAllBtn = document.getElementById('mark-all-read-btn');
+        if (markAllBtn) {
+            markAllBtn.addEventListener('click', async () => {
+                try {
+                    await fetch(`/user/notifications/read-all`, { method: 'POST', headers });
+                    window.location.reload();
+                } catch (err) {
+                    console.error(err);
+                }
+            });
+        }
+        
+        function updateBadgeCount() {
+            // Can be extended to update top nav badge
+        }
+    });
+</script>
+</html>

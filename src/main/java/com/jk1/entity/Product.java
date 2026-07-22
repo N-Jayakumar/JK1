@@ -42,6 +42,9 @@ public class Product extends BaseAuditEntity {
     @Column(name = "discount_price", precision = 10, scale = 2)
     private BigDecimal discountPrice;
 
+    @Column(name = "unit_cost", precision = 10, scale = 2)
+    private BigDecimal unitCost;
+
     @Column(name = "is_featured", nullable = false)
     @Builder.Default
     private boolean featured = false;
@@ -71,6 +74,10 @@ public class Product extends BaseAuditEntity {
     @JoinColumn(name = "brand_id", nullable = false)
     private Brand brand;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplier_id")
+    private Supplier supplier;
+
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Inventory inventory;
 
@@ -88,4 +95,22 @@ public class Product extends BaseAuditEntity {
     @Column(name = "attribute_value")
     @Builder.Default
     private Map<String, String> attributes = new HashMap<>();
+
+    /**
+     * Helper method to get the primary image URL or a reliable fallback.
+     */
+    @Transient
+    public String getImageUrl() {
+        if (images != null && !images.isEmpty()) {
+            String url = images.stream()
+                    .filter(ProductImage::isPrimary)
+                    .findFirst()
+                    .orElse(images.get(0))
+                    .getImageUrl();
+            if (url != null && !url.trim().isEmpty()) {
+                return url;
+            }
+        }
+        return "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=600&auto=format&fit=crop";
+    }
 }

@@ -28,10 +28,19 @@ window.advancedSearch = function() {
         // ── State ────────────────────────────────────────────────────────────
         query:        '',
         results:      [],
+        categories:   [],
         loading:      false,
         showDropdown: false,
         activeIndex:  -1,
         errorMessage: '',
+        hasSearched:  false,
+        
+        get hasContent() {
+            return this.loading || 
+                   this.categories.length > 0 || 
+                   this.results.length > 0 || 
+                   (this.hasSearched && this.results.length === 0 && this.query.trim().length >= 1);
+        },
         
         // Additional state requested by audit
         selectedCategory: null,
@@ -54,6 +63,11 @@ window.advancedSearch = function() {
                     this._closeDropdown();
                 }
             });
+            
+            // Watch query for changes instead of using @input manually
+            this.$watch('query', (value) => {
+                this.fetchSuggestions();
+            });
         },
 
         // ── Fetch ────────────────────────────────────────────────────────────
@@ -65,7 +79,7 @@ window.advancedSearch = function() {
         fetchSuggestions() {
             const q = this.query.trim();
 
-            // Clear & close for empty input
+            // Clear & close for input < 1 chars
             if (q.length < 1) {
                 this._closeDropdown();
                 return;
@@ -104,15 +118,32 @@ window.advancedSearch = function() {
                 // Guard: ensure we received an array
                 this.results = Array.isArray(data) ? data : [];
 
+                // Compute unique categories from results
+                const catMap = new Map();
+                this.results.forEach(item => {
+                    if (item.categoryName) {
+                        // Fallback to generating slug if missing
+                        const cSlug = item.categorySlug || item.categoryName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                        if (!catMap.has(cSlug)) {
+                            catMap.set(cSlug, { name: item.categoryName, slug: cSlug });
+                        }
+                    }
+                });
+                this.categories = Array.from(catMap.values()).slice(0, 3); // Max 3 categories
+                
+                this.hasSearched = true;
+                this.loading = false;
+
             } catch (err) {
                 if (err.name === 'AbortError') {
-                    // Cancelled by a newer request — not an error
+                    // Cancelled by a newer request — do NOT reset loading to false
                     return;
                 }
                 console.warn('[JKØ Search] Suggestion fetch failed:', err.message);
                 this.results      = [];
-                this.errorMessage = 'Search unavailable. Please try again.';
-            } finally {
+                this.categories   = [];
+                this.errorMessage = 'Unable to load search results';
+                this.hasSearched  = true;
                 this.loading = false;
             }
         },
@@ -198,6 +229,7 @@ window.advancedSearch = function() {
         _closeDropdown() {
             this.showDropdown = false;
             this.activeIndex  = -1;
+            this.hasSearched  = false;
         },
 
         /**

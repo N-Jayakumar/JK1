@@ -417,10 +417,9 @@
                   novalidate>
 
                 <!--
-                    CSRF: th:action automatically injects the hidden _csrf field
-                    via Thymeleaf's SpringActionTagProcessor + Spring Security 6.
-                    Do NOT manually add a second hidden CSRF input here.
+                    Explicitly resolve the CSRF token to fix Spring Security 6 deferred token loading.
                 -->
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
                 <!-- Email -->
                 <div>

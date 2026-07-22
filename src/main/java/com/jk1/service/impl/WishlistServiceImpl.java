@@ -62,6 +62,6 @@ public class WishlistServiceImpl implements WishlistService {
         // Remove from wishlist
         removeProductFromWishlist(email, productId);
         // Add to cart with quantity 1
-        cartService.addProductToCart(email, productId, 1);
+        cartService.addProductToCart(email, productId, 1, null, null);
     }
 }

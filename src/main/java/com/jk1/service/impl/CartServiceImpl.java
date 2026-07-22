@@ -4,6 +4,7 @@ import com.jk1.entity.Cart;
 import com.jk1.entity.CartItem;
 import com.jk1.entity.Product;
 import com.jk1.entity.User;
+import com.jk1.repository.CartItemRepository;
 import com.jk1.repository.CartRepository;
 import com.jk1.repository.ProductRepository;
 import com.jk1.repository.UserRepository;
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
@@ -44,7 +46,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void addProductToCart(String email, Long productId, int quantity) {
+    public void addProductToCart(String email, Long productId, int quantity, String selectedSize, String selectedColor) {
         Cart cart = getCartForUser(email);
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -54,7 +56,9 @@ public class CartServiceImpl implements CartService {
         }
 
         Optional<CartItem> existingItem = cart.getItems().stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
+                .filter(item -> item.getProduct().getId().equals(productId) &&
+                        java.util.Objects.equals(item.getSelectedSize(), selectedSize) &&
+                        java.util.Objects.equals(item.getSelectedColor(), selectedColor))
                 .findFirst();
 
         if (existingItem.isPresent()) {
@@ -72,6 +76,8 @@ public class CartServiceImpl implements CartService {
             newItem.setCart(cart);
             newItem.setProduct(product);
             newItem.setQuantity(quantity);
+            newItem.setSelectedSize(selectedSize);
+            newItem.setSelectedColor(selectedColor);
             
             BigDecimal price = product.getDiscountPrice() != null ? product.getDiscountPrice() : product.getPrice();
             newItem.setPrice(price != null ? price : BigDecimal.ZERO);
@@ -96,6 +102,7 @@ public class CartServiceImpl implements CartService {
         }
 
         cartItem.setQuantity(quantity);
+        cartItemRepository.save(cartItem);
         recalculateCartTotal(cart);
         cartRepository.save(cart);
     }

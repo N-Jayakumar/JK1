@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: jk1-app
+    env: docker
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: PORT
+        value: 8080
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:mysql://jk1-mysql:3306/jk1?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+      - key: SPRING_DATASOURCE_USERNAME
+        value: jk1
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+  - type: pserv
+    name: jk1-mysql
+    env: image
+    image:
+      url: mysql:8.0
+    disk:
+      name: mysql-data
+      mountPath: /var/lib/mysql
+      sizeGB: 1
+    envVars:
+      - key: MYSQL_DATABASE
+        value: jk1
+      - key: MYSQL_USER
+        value: jk1
+      - key: MYSQL_PASSWORD
+        sync: false
+      - key: MYSQL_ROOT_PASSWORD
+        sync: false

@@ -19,4 +19,13 @@
     --bs-dark: #0F0F0F;
     --bs-light: #F9F9F9;
     --bs-font-sans-serif: 'Inter', sans-serif;
+
+    /* Luxury UX Tokens */
+    --transition-speed-fast: 0.2s;
+    --transition-speed-normal: 0.4s;
+    --transition-speed-slow: 0.8s;
+    --transition-ease: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth elegant easing */
+    --shadow-subtle: 0 4px 20px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 10px 40px rgba(0, 0, 0, 0.12);
 }
+

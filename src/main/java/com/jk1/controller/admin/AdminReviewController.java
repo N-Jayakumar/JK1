@@ -29,36 +29,28 @@ public class AdminReviewController {
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt")));
         
         model.addAttribute("reviewPage", reviewPage);
+        model.addAttribute("pendingReviews", reviewService.getReviewsByStatus(ReviewStatus.PENDING));
+        model.addAttribute("reportedReviews", reviewService.getReviewsByStatus(ReviewStatus.REPORTED));
         return "admin/reviews";
     }
 
     @PostMapping("/{id}/approve")
     public String approveReview(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        Review review = reviewService.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid review Id:" + id));
-        
-                                review.setReviewStatus(ReviewStatus.APPROVED);
-        reviewService.save(review);
-        
+        reviewService.updateReviewStatus(id, ReviewStatus.APPROVED);
         redirectAttributes.addFlashAttribute("success", "Review approved successfully.");
         return "redirect:/admin/reviews";
     }
 
     @PostMapping("/{id}/reject")
     public String rejectReview(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        Review review = reviewService.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid review Id:" + id));
-        
-                                review.setReviewStatus(ReviewStatus.REJECTED);
-        reviewService.save(review);
-        
+        reviewService.updateReviewStatus(id, ReviewStatus.REJECTED);
         redirectAttributes.addFlashAttribute("success", "Review rejected.");
         return "redirect:/admin/reviews";
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/{id}/delete")
     public String deleteReview(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        reviewService.deleteById(id);
+        reviewService.deleteReview(id);
         redirectAttributes.addFlashAttribute("success", "Review deleted successfully.");
         return "redirect:/admin/reviews";
     }

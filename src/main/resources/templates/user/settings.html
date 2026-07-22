@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{layouts/main :: layout(title='Notification Settings - JK1', content=~{::section}, styles=~{}, scripts=~{})}">
+<section class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <h2 class="fw-bold font-poppins mb-4">Notification Settings</h2>
+            
+            <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> Settings saved successfully!
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
+                <form th:action="@{/user/settings/notifications}" method="post">
+                    
+                    <h5 class="fw-bold mb-3">Email Communications</h5>
+                    <div class="form-check form-switch mb-4">
+                        <input class="form-check-input" type="checkbox" role="switch" id="emailNotifications" name="emailNotifications" 
+                               th:checked="${preferences.emailNotificationsEnabled}">
+                        <label class="form-check-label ms-2" for="emailNotifications">
+                            <strong>Receive Email Notifications</strong><br>
+                            <small class="text-muted">Allow JK1 to send you emails about your account and activity.</small>
+                        </label>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h5 class="fw-bold mb-3">Alert Preferences</h5>
+                    
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" role="switch" id="orderAlerts" name="orderAlerts" 
+                               th:checked="${preferences.orderAlertsEnabled}">
+                        <label class="form-check-label ms-2" for="orderAlerts">
+                            <strong>Order Updates</strong><br>
+                            <small class="text-muted">Get notified when your order is confirmed, shipped, or delivered.</small>
+                        </label>
+                    </div>
+
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" role="switch" id="offerAlerts" name="offerAlerts" 
+                               th:checked="${preferences.offerAlertsEnabled}">
+                        <label class="form-check-label ms-2" for="offerAlerts">
+                            <strong>Promotions & Offers</strong><br>
+                            <small class="text-muted">Be the first to know about festival offers, flash sales, and coupons.</small>
+                        </label>
+                    </div>
+
+                    <div class="form-check form-switch mb-4">
+                        <input class="form-check-input" type="checkbox" role="switch" id="wishlistAlerts" name="wishlistAlerts" 
+                               th:checked="${preferences.wishlistAlertsEnabled}">
+                        <label class="form-check-label ms-2" for="wishlistAlerts">
+                            <strong>Wishlist Alerts</strong><br>
+                            <small class="text-muted">Get notified when items in your wishlist drop in price or are low in stock.</small>
+                        </label>
+                    </div>
+
+                    <div class="d-grid mt-5">
+                        <button type="submit" class="btn btn-dark rounded-pill py-2 fw-medium">Save Preferences</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+</html>

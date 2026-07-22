@@ -36,7 +36,7 @@
     <div class="row mb-5 align-items-center">
         <div class="col">
             <h1 class="fw-bold font-poppins mb-1">Shopping Cart</h1>
-            <p class="text-muted mb-0"
+            <p class="text-muted mb-0 cart-header-count"
                th:text="${cart != null and cart.items != null} ? (${cart.items.size()} + ' item(s) in your cart') : 'Your cart is empty'">
                 0 items in your cart
             </p>
@@ -45,7 +45,7 @@
             <form th:action="@{/cart/clear}" method="post">
                 <button type="submit" class="btn btn-outline-danger rounded-pill px-4"
                         onclick="return confirm('Clear your entire cart?')">
-                    <i class="bi bi-trash me-2"></i>Clear Cart
+                    <i class="fas fa-trash me-2"></i>Clear Cart
                 </button>
             </form>
         </div>
@@ -55,12 +55,12 @@
     <div th:if="${cart == null or cart.items == null or cart.items.isEmpty()}"
          class="text-center py-5 my-5">
         <div class="empty-cart-icon mb-4">
-            <i class="bi bi-cart3 display-1 text-muted"></i>
+            <i class="fas fa-shopping-cart display-1 text-muted"></i>
         </div>
         <h3 class="fw-bold font-poppins mb-2">Your cart is empty</h3>
         <p class="text-muted mb-4">Looks like you haven't added anything yet. Start shopping!</p>
         <a th:href="@{/products}" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm">
-            <i class="bi bi-bag me-2"></i>Shop Now
+            <i class="fas fa-shopping-bag me-2"></i>Shop Now
         </a>
     </div>
 
@@ -79,7 +79,7 @@
 
                             <!-- Product Image -->
                             <div class="flex-shrink-0">
-                                <img th:src="${item.product.images != null and !item.product.images.isEmpty()} ? ${item.product.images[0].imageUrl} : 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=100&auto=format&fit=crop'"
+                                <img th:src="${item.product.imageUrl}"
                                      th:alt="${item.product.name}"
                                      width="80" height="80"
                                      class="rounded-3 object-fit-cover shadow-sm">
@@ -98,36 +98,32 @@
                                    th:text="'₹' + ${item.price}">₹0.00</p>
                                 <div class="text-sm" style="font-size: 0.85rem;">
                                     <span th:if="${item.product.inventory != null and item.product.inventory.quantity >= item.quantity}" class="text-success">
-                                        <i class="bi bi-check-circle me-1"></i> In Stock
+                                        <i class="fas fa-check-circle me-1"></i> In Stock
                                     </span>
                                     <span th:if="${item.product.inventory == null or item.product.inventory.quantity < item.quantity}" class="text-danger">
-                                        <i class="bi bi-x-circle me-1"></i> Out of Stock
+                                        <i class="fas fa-times-circle me-1"></i> Out of Stock
                                     </span>
                                 </div>
                             </div>
 
                             <!-- Quantity Controls -->
                             <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                <form th:action="@{/cart/update/{id}(id=${item.id})}" method="post" class="d-inline">
-                                    <input type="hidden" name="quantity" th:value="${item.quantity - 1}">
-                                    <button type="submit" class="qty-btn d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-dash"></i>
-                                    </button>
-                                </form>
+                                <button type="button" class="qty-btn d-flex align-items-center justify-content-center"
+                                        th:onclick="'updateQuantity(' + ${item.id} + ', -1)'">
+                                    <i class="fas fa-minus"></i>
+                                </button>
 
-                                <span class="fw-bold text-center" style="min-width:30px" th:text="${item.quantity}">1</span>
+                                <span class="fw-bold text-center quantity-display" style="min-width:30px" th:id="'qty-' + ${item.id}" th:text="${item.quantity}">1</span>
 
-                                <form th:action="@{/cart/update/{id}(id=${item.id})}" method="post" class="d-inline">
-                                    <input type="hidden" name="quantity" th:value="${item.quantity + 1}">
-                                    <button type="submit" class="qty-btn d-flex align-items-center justify-content-center">
-                                        <i class="bi bi-plus"></i>
-                                    </button>
-                                </form>
+                                <button type="button" class="qty-btn d-flex align-items-center justify-content-center"
+                                        th:onclick="'updateQuantity(' + ${item.id} + ', 1)'">
+                                    <i class="fas fa-plus"></i>
+                                </button>
                             </div>
 
                             <!-- Line Total -->
                             <div class="text-end flex-shrink-0" style="min-width: 80px;">
-                                <span class="fw-bold text-dark"
+                                <span class="fw-bold text-dark" th:id="'item-total-' + ${item.id}"
                                       th:text="'₹' + ${#numbers.formatDecimal(item.price.multiply(new java.math.BigDecimal(item.quantity)), 1, 2)}">₹0.00</span>
                             </div>
 
@@ -135,7 +131,7 @@
                             <form th:action="@{/cart/remove/{id}(id=${item.id})}" method="post" class="flex-shrink-0">
                                 <button type="submit" class="btn btn-link remove-btn text-danger p-0 border-0"
                                         title="Remove item">
-                                    <i class="bi bi-x-circle fs-5"></i>
+                                    <i class="fas fa-times-circle fs-5"></i>
                                 </button>
                             </form>
                         </div>
@@ -146,7 +142,7 @@
             <!-- Continue Shopping -->
             <div class="mt-4">
                 <a th:href="@{/products}" class="btn btn-outline-secondary rounded-pill px-4">
-                    <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                    <i class="fas fa-arrow-left me-2"></i>Continue Shopping
                 </a>
             </div>
         </div>
@@ -159,32 +155,32 @@
 
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Total Items</span>
-                        <span class="fw-medium" th:text="${totalItems}">0</span>
+                        <span class="fw-medium" id="summary-total-items" th:text="${totalItems}">0</span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-muted">Subtotal</span>
-                        <span class="fw-medium" th:text="'₹' + ${#numbers.formatDecimal(cartSubtotal, 1, 2)}">₹0.00</span>
+                        <span class="fw-medium" id="summary-subtotal" th:text="'₹' + ${#numbers.formatDecimal(cartSubtotal != null ? cartSubtotal : 0, 1, 2)}">₹0.00</span>
                     </div>
-                    <div th:if="${cartDiscount != null and cartDiscount > 0}" class="d-flex justify-content-between mb-2 text-success">
+                    <div th:classappend="${cartDiscount != null and cartDiscount > 0} ? '' : 'd-none'" class="d-flex justify-content-between mb-2 text-success">
                         <span>Discount</span>
-                        <span class="fw-medium" th:text="'-₹' + ${#numbers.formatDecimal(cartDiscount, 1, 2)}">-₹0.00</span>
+                        <span class="fw-medium" id="summary-discount" th:text="'-₹' + ${#numbers.formatDecimal(cartDiscount != null ? cartDiscount : 0, 1, 2)}">-₹0.00</span>
                     </div>
 
                     <hr class="my-3">
 
                     <div class="d-flex justify-content-between mb-4">
                         <span class="fw-bold fs-5">Grand Total</span>
-                        <span class="fw-bold fs-5 text-primary"
-                              th:text="'₹' + ${#numbers.formatDecimal(cart.totalAmount, 1, 2)}">₹0.00</span>
+                        <span class="fw-bold fs-5 text-primary" id="summary-grand-total"
+                              th:text="'₹' + ${#numbers.formatDecimal(cart.totalAmount != null ? cart.totalAmount : 0, 1, 2)}">₹0.00</span>
                     </div>
 
                     <a th:href="@{/checkout}" class="btn btn-primary btn-lg w-100 rounded-pill fw-medium shadow-sm">
-                        <i class="bi bi-lock me-2"></i>Proceed to Checkout
+                        <i class="fas fa-lock me-2"></i>Proceed to Checkout
                     </a>
 
                     <div class="text-center mt-3">
                         <small class="text-muted">
-                            <i class="bi bi-shield-check me-1 text-success"></i>
+                            <i class="fas fa-shield-alt me-1 text-success"></i>
                             Secure 256-bit SSL encrypted checkout
                         </small>
                     </div>
@@ -196,6 +192,7 @@
 
 <th:block th:fragment="scripts">
     <script type="module" th:src="@{/js/app.js}"></script>
+    <script th:src="@{/js/cart.js}"></script>
 </th:block>
 </body>
 </html>

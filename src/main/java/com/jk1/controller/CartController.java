@@ -86,13 +86,15 @@ public class CartController {
     @PostMapping("/add")
     public String addToCart(@RequestParam("productId") Long productId,
                             @RequestParam(value = "quantity", defaultValue = "1") int quantity,
+                            @RequestParam(value = "selectedSize", required = false) String selectedSize,
+                            @RequestParam(value = "selectedColor", required = false) String selectedColor,
                             Principal principal,
                             RedirectAttributes redirectAttributes) {
         if (principal == null) {
             return "redirect:/login";
         }
         try {
-            cartService.addProductToCart(principal.getName(), productId, quantity);
+            cartService.addProductToCart(principal.getName(), productId, quantity, selectedSize, selectedColor);
             redirectAttributes.addFlashAttribute("cartSuccess", "Item added to cart!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("cartError", e.getMessage());
@@ -101,7 +103,67 @@ public class CartController {
     }
 
     /**
-     * Updates the quantity of an existing cart item.
+     * Updates the quantity of an existing cart item via AJAX.
+     */
+    @PostMapping("/api/update/{itemId}")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public org.springframework.http.ResponseEntity<?> updateCartItemAjax(@PathVariable("itemId") Long itemId,
+                                                                       @RequestParam("quantity") int quantity,
+                                                                       Principal principal) {
+        if (principal == null) {
+            return org.springframework.http.ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED)
+                    .body(java.util.Map.of("error", "Unauthorized"));
+        }
+        try {
+            if (quantity <= 0) {
+                cartService.removeCartItem(principal.getName(), itemId);
+            } else {
+                cartService.updateCartItemQuantity(principal.getName(), itemId, quantity);
+            }
+            Cart cart = cartService.getCartForUser(principal.getName());
+            
+            com.jk1.entity.CartItem updatedItem = cart.getItems().stream()
+                    .filter(i -> i.getId().equals(itemId)).findFirst().orElse(null);
+            
+            java.math.BigDecimal itemTotal = java.math.BigDecimal.ZERO;
+            if (updatedItem != null && updatedItem.getPrice() != null) {
+                itemTotal = updatedItem.getPrice().multiply(java.math.BigDecimal.valueOf(updatedItem.getQuantity()));
+            }
+
+            int totalItems = 0;
+            java.math.BigDecimal subtotal = java.math.BigDecimal.ZERO;
+            java.math.BigDecimal discount = java.math.BigDecimal.ZERO;
+            
+            for (com.jk1.entity.CartItem item : cart.getItems()) {
+                totalItems += item.getQuantity();
+                java.math.BigDecimal originalPrice = item.getProduct().getPrice();
+                if (originalPrice == null) originalPrice = java.math.BigDecimal.ZERO;
+                
+                java.math.BigDecimal itemOriginalTotal = originalPrice.multiply(java.math.BigDecimal.valueOf(item.getQuantity()));
+                subtotal = subtotal.add(itemOriginalTotal);
+                
+                java.math.BigDecimal finalPrice = item.getPrice() != null ? item.getPrice() : java.math.BigDecimal.ZERO;
+                java.math.BigDecimal itemFinalTotal = finalPrice.multiply(java.math.BigDecimal.valueOf(item.getQuantity()));
+                discount = discount.add(itemOriginalTotal.subtract(itemFinalTotal));
+            }
+
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("success", true);
+            response.put("itemTotal", itemTotal);
+            response.put("cartTotal", cart.getTotalAmount());
+            response.put("totalItems", totalItems);
+            response.put("subtotal", subtotal);
+            response.put("discount", discount);
+            return org.springframework.http.ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            return org.springframework.http.ResponseEntity.badRequest()
+                    .body(java.util.Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Updates the quantity of an existing cart item (Fallback for non-JS).
      */
     @PostMapping("/update/{itemId}")
     public String updateCartItem(@PathVariable("itemId") Long itemId,

@@ -72,4 +72,38 @@ public class User extends BaseAuditEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Order> orders = new ArrayList<>();
+
+    // Loyalty & Rewards Fields
+    @Column(name = "loyalty_points", nullable = false)
+    @Builder.Default
+    private Integer loyaltyPoints = 0;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "membership_tier", nullable = false, length = 20)
+    @Builder.Default
+    private com.jk1.entity.enums.MembershipTier membershipTier = com.jk1.entity.enums.MembershipTier.BRONZE;
+
+    @Column(name = "referral_code", unique = true, length = 50)
+    private String referralCode;
+
+    @Column(name = "referred_by", length = 50)
+    private String referredBy;
+
+    @Column(name = "date_of_birth")
+    private java.time.LocalDate dateOfBirth;
+
+    // Security Fields
+    @Column(name = "is_2fa_enabled", nullable = false)
+    @Builder.Default
+    private boolean is2faEnabled = false;
+
+    @Column(name = "failed_login_attempts", nullable = false)
+    @Builder.Default
+    private int failedLoginAttempts = 0;
+
+    @Column(name = "lock_time")
+    private java.time.LocalDateTime lockTime;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private NotificationPreference notificationPreference;
 }

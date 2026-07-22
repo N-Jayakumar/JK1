@@ -10,4 +10,8 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<Review, Long>, JpaSpecificationExecutor<Review> {
     List<Review> findByProductId(Long productId);
     List<Review> findByUserId(Long userId);
+    
+    org.springframework.data.domain.Page<Review> findByProduct_IdAndReviewStatus(Long productId, com.jk1.entity.enums.ReviewStatus status, org.springframework.data.domain.Pageable pageable);
+    
+    List<Review> findByReviewStatus(com.jk1.entity.enums.ReviewStatus status);
 }

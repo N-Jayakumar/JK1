@@ -23,6 +23,12 @@ public class CartItem extends BaseAuditEntity {
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
+    @Column(name = "selected_size", length = 50)
+    private String selectedSize;
+
+    @Column(name = "selected_color", length = 50)
+    private String selectedColor;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;

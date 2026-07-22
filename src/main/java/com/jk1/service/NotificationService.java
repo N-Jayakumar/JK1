@@ -12,5 +12,8 @@ public interface NotificationService {
     boolean existsById(Long id);
     List<Notification> getUserNotifications(String email);
     List<Notification> getUnreadNotifications(String email);
+    long getUnreadCount(String email);
     void markAsRead(Long id, String email);
+    void markAllAsRead(String email);
+    Notification createAndSendNotification(com.jk1.entity.User user, String title, String message, com.jk1.entity.enums.NotificationType type);
 }

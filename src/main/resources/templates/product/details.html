@@ -123,6 +123,30 @@
 
             <hr class="text-muted mb-4">
 
+            <!-- Variants (Size / Color) -->
+            <div class="mb-4 d-flex gap-4">
+                <div class="flex-grow-1">
+                    <p class="fw-bold font-poppins mb-2">Color</p>
+                    <select class="form-select rounded-pill px-3" id="colorSelect" onchange="document.getElementById('cart-color-hidden').value = this.value; document.getElementById('buy-color-hidden').value = this.value;">
+                        <option value="">Select Color</option>
+                        <option value="Black">Black</option>
+                        <option value="White">White</option>
+                        <option value="Navy">Navy</option>
+                        <option value="Red">Red</option>
+                    </select>
+                </div>
+                <div class="flex-grow-1">
+                    <p class="fw-bold font-poppins mb-2">Size</p>
+                    <select class="form-select rounded-pill px-3" id="sizeSelect" onchange="document.getElementById('cart-size-hidden').value = this.value; document.getElementById('buy-size-hidden').value = this.value;">
+                        <option value="">Select Size</option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                </div>
+            </div>
+
             <!-- Quantity + Stock -->
             <div x-data="{ qty: 1, maxQty: [[${product.stockQuantity}]] }">
                 <div class="mb-4">
@@ -172,6 +196,8 @@
                     <form th:action="@{/cart/add}" method="POST" class="flex-grow-1 d-flex gap-3">
                         <input type="hidden" name="productId" th:value="${product.id}" id="cart-product-id">
                         <input type="hidden" name="quantity" :value="qty" id="cart-quantity-hidden">
+                        <input type="hidden" name="selectedSize" id="cart-size-hidden">
+                        <input type="hidden" name="selectedColor" id="cart-color-hidden">
 
                     <button type="submit"
                             id="add-to-cart-btn"
@@ -192,6 +218,8 @@
                 <form th:action="@{/cart/add}" method="POST" id="buy-now-form" class="d-none">
                     <input type="hidden" name="productId" th:value="${product.id}">
                     <input type="hidden" name="quantity" :value="qty">
+                    <input type="hidden" name="selectedSize" id="buy-size-hidden">
+                    <input type="hidden" name="selectedColor" id="buy-color-hidden">
                     <input type="hidden" name="checkout" value="true"> <!-- Assuming backend supports redirect logic based on checkout param -->
                 </form>
 
@@ -217,6 +245,180 @@
 
         </div><!-- /product info col -->
     </div><!-- /main row -->
+
+    <!-- ══ Reviews and Q&A Tabs ═════════════════════════════════════════════ -->
+    <div class="section-divider mt-5 pt-4 border-top">
+        <ul class="nav nav-tabs fw-bold mb-4" id="productTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active text-dark px-4" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews-pane" type="button" role="tab" aria-controls="reviews-pane" aria-selected="true">
+                    Customer Reviews (<span th:text="${product.reviewCount}">0</span>)
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link text-dark px-4" id="qa-tab" data-bs-toggle="tab" data-bs-target="#qa-pane" type="button" role="tab" aria-controls="qa-pane" aria-selected="false">
+                    Questions & Answers
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content" id="productTabsContent">
+            
+            <!-- Reviews Pane -->
+            <div class="tab-pane fade show active" id="reviews-pane" role="tabpanel" aria-labelledby="reviews-tab" tabindex="0">
+                <div class="row g-5">
+                    <!-- Rating Summary -->
+                    <div class="col-lg-4">
+                        <div class="bg-light p-4 rounded-4 text-center">
+                            <h2 class="display-4 fw-bold text-dark mb-0" th:text="${#numbers.formatDecimal(product.averageRating, 1, 1)}">0.0</h2>
+                            <div class="star-rating my-2 fs-5">
+                                <th:block th:each="i : ${#numbers.sequence(1, 5)}">
+                                    <i th:class="${i <= product.averageRating ? 'bi bi-star-fill' : (i - 0.5 <= product.averageRating ? 'bi bi-star-half' : 'bi bi-star')}" style="color:#f6ad55;"></i>
+                                </th:block>
+                            </div>
+                            <p class="text-muted small mb-4">Based on <span th:text="${product.reviewCount}">0</span> reviews</p>
+                            
+                            <hr>
+                            <h6 class="fw-bold mb-3 mt-3">Share your thoughts</h6>
+                            <p class="small text-muted mb-3">If you've used this product, share your experience with other customers</p>
+                            <button class="btn btn-dark w-100 rounded-pill" data-bs-toggle="modal" data-bs-target="#writeReviewModal">
+                                Write a Review
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Review List -->
+                    <div class="col-lg-8" id="reviews-container">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="fw-bold mb-0">Recent Reviews</h5>
+                            <select class="form-select w-auto form-select-sm rounded-pill px-3" id="reviewSort">
+                                <option value="newest">Newest First</option>
+                                <option value="helpful">Most Helpful</option>
+                                <option value="highest">Highest Rating</option>
+                            </select>
+                        </div>
+                        
+                        <div th:if="${#lists.isEmpty(product.reviews)}" class="text-center text-muted py-5">
+                            <i class="bi bi-chat-square-text display-6 d-block mb-3 opacity-50"></i>
+                            <p>No reviews yet. Be the first to review this product!</p>
+                        </div>
+                        
+                        <div class="list-group list-group-flush" th:if="${!#lists.isEmpty(product.reviews)}">
+                            <div th:each="review : ${product.reviews}" class="list-group-item px-0 py-4 border-bottom">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="bg-secondary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center text-secondary fw-bold" style="width: 40px; height: 40px;" th:text="${#strings.substring(review.user.name, 0, 1)}">U</div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold" th:text="${review.user.name}">User</h6>
+                                            <span th:if="${review.verifiedPurchase}" class="badge bg-success bg-opacity-10 text-success fw-medium" style="font-size: 0.65rem;">
+                                                <i class="bi bi-check-circle-fill me-1"></i>Verified Buyer
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted" th:text="${#temporals.format(review.createdAt, 'MMM dd, yyyy')}">Date</small>
+                                </div>
+                                <div class="star-rating mb-2">
+                                    <th:block th:each="i : ${#numbers.sequence(1, 5)}">
+                                        <i th:class="${i <= review.rating ? 'bi bi-star-fill' : 'bi bi-star'}" style="color:#f6ad55; font-size: 0.9rem;"></i>
+                                    </th:block>
+                                </div>
+                                <p class="mb-3 text-dark" th:text="${review.comment}">Review content</p>
+                                
+                                <div class="d-flex gap-2 mb-3" th:if="${!#lists.isEmpty(review.images)}">
+                                    <img th:each="img : ${review.images}" th:src="${img.imageUrl}" alt="Review image" class="rounded border object-fit-cover cursor-pointer" style="width: 60px; height: 60px;" onclick="window.open(this.src, '_blank')">
+                                </div>
+                                
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="small text-muted fw-medium">Was this helpful?</span>
+                                    <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 vote-btn" th:data-id="${review.id}" data-helpful="true">
+                                        <i class="bi bi-hand-thumbs-up me-1"></i> <span th:text="${review.helpfulVotes}">0</span>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 vote-btn" th:data-id="${review.id}" data-helpful="false">
+                                        <i class="bi bi-hand-thumbs-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Q&A Pane -->
+            <div class="tab-pane fade" id="qa-pane" role="tabpanel" aria-labelledby="qa-tab" tabindex="0">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold mb-0">Customer Questions & Answers</h5>
+                    <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#askQuestionModal">
+                        Ask a Question
+                    </button>
+                </div>
+                
+                <div class="list-group list-group-flush" id="qa-container">
+                    <div class="text-center text-muted py-5" id="empty-qa">
+                        <i class="bi bi-question-circle display-6 d-block mb-3 opacity-50"></i>
+                        <p>Don't see the answer you're looking for? Ask the community!</p>
+                    </div>
+                    <!-- Q&A populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Write Review Modal -->
+    <div class="modal fade" id="writeReviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Write a Review</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="writeReviewForm" th:action="@{/api/reviews}" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <div class="mb-3 text-center">
+                            <label class="form-label fw-bold d-block">Overall Rating</label>
+                            <div class="fs-2 text-warning cursor-pointer" id="modal-star-rating">
+                                <i class="bi bi-star" data-val="1"></i>
+                                <i class="bi bi-star" data-val="2"></i>
+                                <i class="bi bi-star" data-val="3"></i>
+                                <i class="bi bi-star" data-val="4"></i>
+                                <i class="bi bi-star" data-val="5"></i>
+                            </div>
+                            <input type="hidden" name="rating" id="review-rating-val" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Your Review</label>
+                            <textarea class="form-control" name="comment" rows="4" placeholder="What did you like or dislike?" required></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Add Photo</label>
+                            <input class="form-control" type="file" name="images" accept="image/*" multiple>
+                        </div>
+                        <button type="submit" class="btn btn-dark w-100 rounded-pill py-2 fw-medium">Submit Review</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ask Question Modal -->
+    <div class="modal fade" id="askQuestionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Ask a Question</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="askQuestionForm" th:action="@{/api/qa/questions}" method="POST">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <div class="mb-4">
+                            <textarea class="form-control" name="content" rows="4" placeholder="e.g., Does this fit true to size?" required></textarea>
+                            <div class="form-text mt-2">Please keep your question focused on the product.</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-medium">Post Question</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ══ Complete The Look ════════════════════════════════════════════════ -->
     <div th:if="${completeTheLook != null and !completeTheLook.empty}"
@@ -334,6 +536,7 @@
     <!-- JS -->
     <script type="module" th:src="@{/js/app.js}"></script>
     <script type="module" th:src="@{/js/pages/product/details.js}"></script>
+    <script th:src="@{/js/reviews.js}"></script>
 
     <!-- Inline: sync Alpine qty to hidden form field + thumb switching -->
     <script>

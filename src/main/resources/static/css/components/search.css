@@ -17,9 +17,9 @@
 .search-input-field {
     width: 100%;
     height: 48px;
-    padding: 0 48px 0 20px;
+    padding: 0 20px 0 48px;
     border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 50rem;
+    border-radius: 50px;
     background: #f8f9fa;
     font-size: 0.95rem;
     font-family: 'Inter', sans-serif;
@@ -42,7 +42,7 @@
 
 .search-submit-btn {
     position: absolute;
-    right: 16px;
+    left: 16px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -106,14 +106,17 @@
 
 /* ── Result List ─────────────────────────────────────────────────────────── */
 
+.search-results-container {
+    max-height: 480px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #e2e8f0 transparent;
+}
+
 .search-results-list {
     list-style: none;
     margin: 0;
     padding: 0.5rem 0;
-    max-height: 420px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #e2e8f0 transparent;
 }
 
 .search-results-list::-webkit-scrollbar {

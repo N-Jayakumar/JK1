@@ -118,6 +118,8 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setProduct(product);
             orderItem.setQuantity(ci.getQuantity());
             orderItem.setPrice(ci.getPrice());
+            orderItem.setSelectedSize(ci.getSelectedSize());
+            orderItem.setSelectedColor(ci.getSelectedColor());
             order.getItems().add(orderItem);
             
             // Deduct stock

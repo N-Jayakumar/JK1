@@ -96,7 +96,15 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     // ─── Status-scoped paged finders ───
 
-    Page<Product> findByProductStatus(ProductStatus status, Pageable pageable);
+    @Query(value = "SELECT DISTINCT p FROM Product p " +
+                   "LEFT JOIN FETCH p.category " +
+                   "LEFT JOIN FETCH p.brand " +
+                   "LEFT JOIN FETCH p.inventory " +
+                   "LEFT JOIN FETCH p.images " +
+                   "WHERE p.productStatus = :status",
+           countQuery = "SELECT COUNT(DISTINCT p) FROM Product p " +
+                        "WHERE p.productStatus = :status")
+    Page<Product> findByProductStatus(@Param("status") ProductStatus status, Pageable pageable);
 
     @Query(value = "SELECT DISTINCT p FROM Product p " +
                    "LEFT JOIN FETCH p.category " +

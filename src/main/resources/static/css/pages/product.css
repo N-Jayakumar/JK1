@@ -58,6 +58,30 @@
     box-shadow: 0 20px 48px rgba(0, 0, 0, 0.12) !important;
 }
 
+/* ────────────────────────────────────────────────────────────
+   PRODUCT LIST — Hover Actions
+   ──────────────────────────────────────────────────────────── */
+.product-actions-overlay {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 10;
+}
+
+.product-card:hover .product-actions-overlay {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.product-action-btn {
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.product-action-btn:hover {
+    color: #D4AF37;
+    transform: scale(1.1);
+}
+
 /* Image container with consistent aspect ratio */
 .product-image-container {
     background: #f8f9fa;
