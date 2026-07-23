@@ -80,8 +80,9 @@ public class Product extends BaseAuditEntity {
     @JoinColumn(name = "supplier_id")
     private Supplier supplier;
 
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Inventory inventory;
+    @Column(name = "quantity", nullable = false)
+    @Builder.Default
+    private Integer quantity = 0;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

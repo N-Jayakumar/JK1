@@ -8,7 +8,7 @@ import com.jk1.entity.Inventory;
 import com.jk1.service.ProductService;
 import com.jk1.service.CategoryService;
 import com.jk1.service.BrandService;
-import com.jk1.service.InventoryService;
+import com.jk1.service.BrandService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,7 +28,6 @@ public class AdminProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
     private final BrandService brandService;
-    private final InventoryService inventoryService;
 
     @GetMapping
     public String listProducts(
@@ -86,17 +85,9 @@ public class AdminProductController {
             product.setCategory(category);
             product.setBrand(brand);
             product.setAttributes(dto.getAttributes());
+            product.setQuantity(dto.getQuantity() != null ? dto.getQuantity() : 0);
 
             Product savedProduct = productService.save(product);
-
-            if (dto.getId() == null) {
-                // Initialize inventory for new product
-                Inventory inventory = new Inventory();
-                inventory.setProduct(savedProduct);
-                inventory.setQuantity(dto.getInitialQuantity() != null ? dto.getInitialQuantity() : 0);
-                inventory.setReservedQuantity(0);
-                inventoryService.save(inventory);
-            }
 
             redirectAttributes.addFlashAttribute("success", "Product saved successfully");
             return "redirect:/admin/products";
@@ -124,11 +115,7 @@ public class AdminProductController {
         dto.setBrandId(product.getBrand().getId());
         dto.setAttributes(product.getAttributes());
         
-        if (product.getInventory() != null) {
-            dto.setInitialQuantity(product.getInventory().getQuantity());
-        } else {
-            dto.setInitialQuantity(0);
-        }
+        dto.setQuantity(product.getQuantity() != null ? product.getQuantity() : 0);
 
         model.addAttribute("productDto", dto);
         model.addAttribute("categories", categoryService.findAll());

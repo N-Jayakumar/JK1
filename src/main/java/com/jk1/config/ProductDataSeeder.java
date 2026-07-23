@@ -107,13 +107,7 @@ public class ProductDataSeeder implements CommandLineRunner {
                 .brand(brand)
                 .build();
 
-        // Inventory
-        Inventory inventory = Inventory.builder()
-                .quantity(50 + index * 5)
-                .reservedQuantity(0)
-                .product(product)
-                .build();
-        product.setInventory(inventory);
+        product.setQuantity(50 + index * 5);
 
         // Image (Placeholder based on category)
         ProductImage image = ProductImage.builder()

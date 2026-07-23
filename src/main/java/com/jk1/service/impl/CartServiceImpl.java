@@ -51,7 +51,7 @@ public class CartServiceImpl implements CartService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        if (product.getInventory() == null || product.getInventory().getQuantity() < quantity) {
+        if (product.getQuantity() == null || product.getQuantity() < quantity) {
             throw new RuntimeException("Not enough stock available");
         }
 
@@ -63,7 +63,7 @@ public class CartServiceImpl implements CartService {
 
         if (existingItem.isPresent()) {
             CartItem item = existingItem.get();
-            if (product.getInventory().getQuantity() < (item.getQuantity() + quantity)) {
+            if (product.getQuantity() < (item.getQuantity() + quantity)) {
                 throw new RuntimeException("Not enough stock available for additional quantity");
             }
             item.setQuantity(item.getQuantity() + quantity);
@@ -97,7 +97,7 @@ public class CartServiceImpl implements CartService {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
 
-        if (cartItem.getProduct().getInventory() == null || cartItem.getProduct().getInventory().getQuantity() < quantity) {
+        if (cartItem.getProduct().getQuantity() == null || cartItem.getProduct().getQuantity() < quantity) {
             throw new RuntimeException("Not enough stock available");
         }
 

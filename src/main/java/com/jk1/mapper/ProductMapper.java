@@ -2,7 +2,6 @@ package com.jk1.mapper;
 
 import com.jk1.dto.request.ProductRequestDTO;
 import com.jk1.dto.response.ProductResponseDTO;
-import com.jk1.entity.Inventory;
 import com.jk1.entity.Product;
 import com.jk1.entity.ProductImage;
 import org.springframework.stereotype.Component;
@@ -122,14 +121,7 @@ public class ProductMapper {
         );
 
         // ── Stock ─────────────────────────────────────────────────────────
-        Inventory inventory = entity.getInventory();
-        if (inventory != null) {
-            int available = (inventory.getQuantity() != null ? inventory.getQuantity() : 0)
-                          - (inventory.getReservedQuantity() != null ? inventory.getReservedQuantity() : 0);
-            dto.setStockQuantity(Math.max(0, available));
-        } else {
-            dto.setStockQuantity(0);
-        }
+        dto.setStockQuantity(entity.getQuantity() != null ? entity.getQuantity() : 0);
 
         // ── Flags ─────────────────────────────────────────────────────────
         dto.setFeatured(entity.isFeatured());

@@ -47,7 +47,7 @@ public class AdminProductRequestDTO {
 
     @NotNull(message = "Quantity is required")
     @PositiveOrZero(message = "Quantity cannot be negative")
-    private Integer initialQuantity;
+    private Integer quantity;
 
     @Builder.Default
     private Map<String, String> attributes = new HashMap<>();

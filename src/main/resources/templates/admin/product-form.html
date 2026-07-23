@@ -50,10 +50,10 @@
                                 <option value="ARCHIVED">Archived</option>
                             </select>
                         </div>
-                        <div class="col-md-4" th:if="${productDto.id == null}">
-                            <label class="form-label text-uppercase text-muted small fw-semibold">Initial Stock</label>
-                            <input type="number" class="form-control form-control-lg bg-light border-0 px-4" th:field="*{initialQuantity}">
-                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('initialQuantity')}" th:errors="*{initialQuantity}"></div>
+                        <div class="col-md-4">
+                            <label class="form-label text-uppercase text-muted small fw-semibold">Stock Quantity</label>
+                            <input type="number" class="form-control form-control-lg bg-light border-0 px-4" th:field="*{quantity}">
+                            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"></div>
                         </div>
                     </div>
 

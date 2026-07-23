@@ -30,7 +30,7 @@ public class OrderServiceImpl implements OrderService {
     private final AddressRepository addressRepository;
     private final CartService cartService;
     private final CouponRepository couponRepository;
-    private final InventoryRepository inventoryRepository;
+    private final ProductRepository productRepository;
     private final PaymentRepository paymentRepository;
 
     @Override
@@ -107,9 +107,7 @@ public class OrderServiceImpl implements OrderService {
         // Add Items and verify inventory
         for (CartItem ci : cart.getItems()) {
             Product product = ci.getProduct();
-            Inventory inventory = product.getInventory();
-            
-            if (inventory == null || inventory.getQuantity() < ci.getQuantity()) {
+            if (product.getQuantity() == null || product.getQuantity() < ci.getQuantity()) {
                 throw new RuntimeException("Product " + product.getName() + " is out of stock");
             }
             
@@ -123,8 +121,8 @@ public class OrderServiceImpl implements OrderService {
             order.getItems().add(orderItem);
             
             // Deduct stock
-            inventory.setQuantity(inventory.getQuantity() - ci.getQuantity());
-            inventoryRepository.save(inventory);
+            product.setQuantity(product.getQuantity() - ci.getQuantity());
+            productRepository.save(product);
         }
 
         Order savedOrder = orderRepository.save(order);
