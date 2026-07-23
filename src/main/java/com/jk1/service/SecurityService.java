@@ -19,6 +19,9 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SecurityService {
@@ -30,6 +33,9 @@ public class SecurityService {
 
     @Autowired(required = false)
     private JavaMailSender mailSender;
+
+    @org.springframework.beans.factory.annotation.Value("${app.base-url:http://localhost:8080}")
+    private String baseUrl;
 
     public void generateAndSendOtp(User user) {
         String otp = String.format("%06d", new Random().nextInt(999999));
@@ -49,10 +55,10 @@ public class SecurityService {
             if (mailSender != null) {
                 mailSender.send(message);
             } else {
-                System.out.println("MailSender is disabled/null. OTP: " + otp);
+                log.warn("MailSender is disabled/null. OTP: {}", otp);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Failed to send OTP email to {}", user.getEmail(), e);
         }
     }
 
@@ -82,17 +88,17 @@ public class SecurityService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
         message.setSubject("Reset Password");
-        // Typically would use environment variable or properties for base url, assuming localhost:8080 here
+        // Uses environment variable or properties for base url
         message.setText("To reset your password, click the link below:\n" +
-                "http://localhost:8080/reset-password?token=" + token);
+                baseUrl + "/reset-password?token=" + token);
         try {
             if (mailSender != null) {
                 mailSender.send(message);
             } else {
-                System.out.println("MailSender is disabled/null. Password Reset Token: " + token);
+                log.warn("MailSender is disabled/null. Password Reset Token: {}", token);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Failed to send password reset email to {}", user.getEmail(), e);
         }
     }
 

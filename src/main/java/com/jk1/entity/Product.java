@@ -12,7 +12,9 @@ import java.util.Map;
 import java.util.HashMap;
 
 @Entity
-@Table(name = "products")
+@Table(name = "products", indexes = {
+        @Index(name = "idx_product_sku", columnList = "sku")
+})
 @Getter
 @Setter
 @NoArgsConstructor

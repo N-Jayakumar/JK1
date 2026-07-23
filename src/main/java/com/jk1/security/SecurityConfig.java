@@ -27,6 +27,7 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final CustomAuthenticationSuccessHandler successHandler;
     private final CustomAuthenticationFailureHandler failureHandler;
+    private final JwtAuthenticationFilter jwtAuthFilter;
 
     @Bean
     public SessionRegistry sessionRegistry() {
@@ -54,9 +55,10 @@ public class SecurityConfig {
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/fonts/**", "/icons/**", "/uploads/**", "/webjars/**").permitAll()
                 // Public pages
                 .requestMatchers("/", "/home", "/login", "/register", "/products/**", "/deals", "/deals/**",
-                                 "/search", "/api/v1/search/**", "/api/search/**", 
+                                 "/search", "/api/v1/search/**", "/api/search/**", "/api/v1/auth/**",
                                  "/forgot-password", "/reset-password", "/verify-otp").permitAll()
                 // Role-based access
+                .requestMatchers("/actuator/health").permitAll()
                 .requestMatchers("/actuator/**").hasRole("ADMIN")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/seller/**").hasAnyRole("ADMIN", "SELLER")
@@ -94,10 +96,10 @@ public class SecurityConfig {
                 .csrfTokenRequestHandler(new XorCsrfTokenRequestAttributeHandler())
             )
             .sessionManagement(session -> session
-                .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED)
             )
+            .addFilterBefore(jwtAuthFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
             .headers(headers -> headers
-                .xssProtection(xss -> xss.headerValue(org.springframework.security.web.header.writers.XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
                 .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:;"))
             );
 

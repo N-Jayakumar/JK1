@@ -6,8 +6,12 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
+    
+    @EntityGraph(attributePaths = {"roles"})
     Optional<User> findByEmail(String email);
     boolean existsByEmail(String email);
 }

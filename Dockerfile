@@ -21,8 +21,12 @@ WORKDIR /app
 # Copy the built jar from the builder stage
 COPY --from=builder /app/target/*.jar app.jar
 
+# Add non-root user for security
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+USER appuser
+
 # Expose the application port
 EXPOSE 8080
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run the application (use PORT environment variable if available)
+ENTRYPOINT ["java", "-Xmx256m", "-Xss512k", "-jar", "app.jar"]

@@ -140,6 +140,48 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles database constraint violations (e.g. duplicate keys).
+     */
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public Object handleDataIntegrityViolationException(
+            org.springframework.dao.DataIntegrityViolationException ex,
+            HttpServletRequest request) {
+
+        log.warn("[409] Database constraint violation at {}: {}", request.getRequestURI(), ex.getMessage());
+
+        if (wantsJson(request)) {
+            return buildJsonResponse(HttpStatus.CONFLICT,
+                    "A conflict occurred saving data. Please ensure data is unique and try again.", request);
+        }
+
+        return buildMvcError(HttpStatus.CONFLICT,
+                "Data Conflict",
+                "The data you submitted conflicts with existing records.",
+                "error/500");
+    }
+
+    /**
+     * Handles JPA validation constraints before flushing to DB.
+     */
+    @ExceptionHandler(jakarta.validation.ConstraintViolationException.class)
+    public Object handleConstraintViolationException(
+            jakarta.validation.ConstraintViolationException ex,
+            HttpServletRequest request) {
+
+        log.warn("[400] Constraint violation at {}: {}", request.getRequestURI(), ex.getMessage());
+
+        if (wantsJson(request)) {
+            return buildJsonResponse(HttpStatus.BAD_REQUEST,
+                    "Invalid data format. Please correct and try again.", request);
+        }
+
+        return buildMvcError(HttpStatus.BAD_REQUEST,
+                "Bad Request",
+                "The data you submitted was invalid.",
+                "error/500");
+    }
+
+    /**
      * Handles missing static resources (like images) and undefined endpoints.
      * Prevents these from falling through to the generic 500 error handler.
      */

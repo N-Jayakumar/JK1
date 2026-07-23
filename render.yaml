@@ -7,29 +7,25 @@ services:
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      - key: PORT
-        value: 8080
       - key: SPRING_DATASOURCE_URL
-        value: jdbc:mysql://jk1-mysql:3306/jk1?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+        value: jdbc:mysql://jk1-mysql:3306/jk1_dev?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
       - key: SPRING_DATASOURCE_USERNAME
         value: jk1
       - key: SPRING_DATASOURCE_PASSWORD
-        sync: false
+        fromService:
+          type: pserv
+          name: jk1-mysql
+          envVarKey: MYSQL_PASSWORD
   - type: pserv
     name: jk1-mysql
     env: image
     image:
       url: mysql:8.0
-    disk:
-      name: mysql-data
-      mountPath: /var/lib/mysql
-      sizeGB: 1
-    envVars:
       - key: MYSQL_DATABASE
-        value: jk1
+        value: jk1_dev
       - key: MYSQL_USER
         value: jk1
       - key: MYSQL_PASSWORD
-        sync: false
+        generateValue: true
       - key: MYSQL_ROOT_PASSWORD
-        sync: false
+        generateValue: true
